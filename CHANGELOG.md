@@ -1,5 +1,15 @@
 # Changelog
 
+[Ejercicio 4]
+- Definición de clases de servicio (lógica de negocio) para cada entidad:
+  GeneroService, EditorialService, MonedaService, TipoCotizacionService,
+  LibroService, PrecioService, StockService y CotizacionDolarService
+- Generación de ids y validaciones de datos antes de crear/actualizar
+  cada entidad (nombres, CUIT, email, código de moneda, ISBN, fechas,
+  valores numéricos y estados de stock)
+- Validación de existencia de entidades relacionadas (género, editorial,
+  libro, moneda, tipo de cotización) al crear o actualizar
+
 [Ejercicio 2]
 - Definición de clase base EntidadBase
 - Definición de clase Genero con encapsulamiento
