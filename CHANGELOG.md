@@ -1,5 +1,11 @@
 # Changelog
 
+[Ejercicio 5]
+- Se crearon los archivos CSV para la importación de datos.
+- Se agregaron 10 registros para cada entidad.
+- Se implementó la precarga de datos desde archivos CSV.
+- Se relacionaron los datos precargados con las entidades del sistema.
+
 [Ejercicio 4]
 - Definición de clases de servicio (lógica de negocio) para cada entidad:
   GeneroService, EditorialService, MonedaService, TipoCotizacionService,

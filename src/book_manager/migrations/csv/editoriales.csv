@@ -1,0 +1,11 @@
+id,nombre,cuit,email,telefono,pais
+1,Planeta,30-50000001-1,contacto@planeta.com,+54-11-4000-0001,Argentina
+2,Penguin Random House,30-50000002-2,contacto@penguin.com,+54-11-4000-0002,Argentina
+3,Alfaguara,30-50000003-3,contacto@alfaguara.com,+54-11-4000-0003,España
+4,Anagrama,30-50000004-4,contacto@anagrama.com,+34-93-400-0004,España
+5,Paidós,30-50000005-5,contacto@paidos.com,+54-11-4000-0005,Argentina
+6,Siglo XXI,30-50000006-6,contacto@sigloxxi.com,+54-11-4000-0006,Argentina
+7,Minotauro,30-50000007-7,contacto@minotauro.com,+34-93-400-0007,España
+8,Salamandra,30-50000008-8,contacto@salamandra.com,+34-93-400-0008,España
+9,Kapelusz,30-50000009-9,contacto@kapelusz.com,+54-11-4000-0009,Argentina
+10,Fondo de Cultura Económica,30-50000010-0,contacto@fce.com,+54-11-4000-0010,México

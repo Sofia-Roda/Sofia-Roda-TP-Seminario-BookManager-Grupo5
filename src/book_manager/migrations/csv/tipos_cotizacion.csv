@@ -1,0 +1,11 @@
+id,nombre,descripcion
+1,Oficial,Cotización oficial de referencia
+2,Blue,Cotización informal de referencia
+3,MEP,Cotización dólar MEP
+4,CCL,Cotización contado con liquidación
+5,Mayorista,Cotización del mercado mayorista
+6,Tarjeta,Cotización aplicada a consumos con tarjeta
+7,Ahorro,Cotización asociada a operaciones de ahorro
+8,Turista,Cotización de referencia para consumos turísticos
+9,Cripto,Cotización implícita mediante criptoactivos
+10,Banco,Cotización de referencia bancaria

@@ -1,0 +1,11 @@
+id,isbn,titulo,autor,genero_id,editorial_id,idioma,fecha_publicacion,fecha_primera_publicacion,num_paginas,peso,descripcion,ranking
+1,9789500000001,El jardín de los ecos,Ana Torres,1,1,Español,2024-03-10,2024-03-10,320,0.45,Novela contemporánea,1
+2,9789500000002,Órbita final,Lucas Méndez,2,2,Español,2023-08-15,2022-11-01,410,0.52,Ciencia ficción espacial,2
+3,9789500000003,El reino de ceniza,María Vidal,3,3,Español,2022-05-20,2021-09-12,500,0.61,Fantasía épica,3
+4,9789500000004,La llave ausente,Julián Ríos,4,4,Español,2024-01-18,2024-01-18,280,0.39,Misterio policial,4
+5,9789500000005,Historia del siglo breve,Clara Suárez,5,5,Español,2021-10-01,2020-06-15,350,0.48,Ensayo histórico,5
+6,9789500000006,Una vida entre libros,Pablo Núñez,6,6,Español,2020-07-11,2020-07-11,300,0.42,Biografía cultural,6
+7,9789500000007,Pensar el presente,Laura Acosta,7,7,Español,2023-02-03,2022-12-01,240,0.34,Ensayos sobre sociedad,7
+8,9789500000008,Aventuras en el bosque,Sofía Luna,8,8,Español,2024-04-25,2024-04-25,120,0.25,Relato infantil ilustrado,8
+9,9789500000009,Python aplicado,Diego Campos,9,9,Español,2025-01-15,2025-01-15,460,0.58,Introducción práctica a Python,9
+10,9789500000010,Versos de otoño,Elena Paz,10,10,Español,2022-09-21,2022-09-21,180,0.29,Selección de poemas,10

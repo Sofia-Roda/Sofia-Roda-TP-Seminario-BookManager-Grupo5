@@ -1,0 +1,11 @@
+id,libro_id,cantidad,estado,ubicacion,fecha_ingreso
+1,1,12,Disponible,A1,2026-09-01
+2,2,8,Disponible,A2,2026-09-02
+3,3,5,Bajo,A3,2026-09-03
+4,4,15,Disponible,B1,2026-09-04
+5,5,6,Disponible,B2,2026-09-05
+6,6,3,Bajo,B3,2026-09-06
+7,7,10,Disponible,C1,2026-09-07
+8,8,20,Disponible,C2,2026-09-08
+9,9,7,Disponible,C3,2026-09-09
+10,10,4,Bajo,D1,2026-09-10
