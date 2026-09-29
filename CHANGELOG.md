@@ -26,6 +26,12 @@
 - Validación de existencia de entidades relacionadas (género, editorial,
   libro, moneda, tipo de cotización) al crear o actualizar
 
+[Ejercicio 3]
+- Definición de la interfaz genérica IRepositorio para las operaciones CRUD.
+- Implementación de RepositorioGenerico basado en listas.
+- Implementación de repositorios para Género, Editorial, Moneda, TipoCotizacion, Libro y Precio.
+- Implementación de repositorios específicos para Stock y CotizacionDolar.
+
 [Ejercicio 2]
 - Definición de clase base EntidadBase
 - Definición de clase Genero con encapsulamiento
