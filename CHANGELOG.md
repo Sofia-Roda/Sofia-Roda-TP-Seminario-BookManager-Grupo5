@@ -1,4 +1,9 @@
 # Changelog
+[Ejercicio 7]
+- Se creó main.py como punto de entrada del sistema.
+- Se integró la creación y precarga de repositorios con la interfaz de consola.
+- Se agregó la opción import_default_data para ejecutar el sistema con o sin datos precargados.
+
 [Ejercicio 6]
 - Se implementó la interfaz de consola del sistema.
 - Se agregaron menús CRUD para Género, Editorial, Moneda, TipoCotizacion, Libro, Precio, Stock y CotizacionDolar.
