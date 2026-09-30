@@ -9,6 +9,7 @@
 - Se agregaron menús CRUD para Género, Editorial, Moneda, TipoCotizacion, Libro, Precio, Stock y CotizacionDolar.
 - Se agregaron validaciones para números enteros, decimales y fechas ingresadas por el usuario.
 - Se conectó la interfaz de consola con los repositorios del sistema.
+- Se realizaron ajustes internos en la interfaz de consola para mejorar la organización, legibilidad y consistencia del código
 
 [Ejercicio 5]
 - Se crearon los archivos CSV para la importación de datos.
