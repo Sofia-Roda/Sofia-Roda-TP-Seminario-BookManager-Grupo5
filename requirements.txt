@@ -1,4 +1,5 @@
-csv
-datetime
-abc
-typing
+# El proyecto no tiene dependencias externas: solo utiliza módulos de la
+# biblioteca estándar de Python (abc, csv, datetime, os, typing), que ya
+# vienen incluidos y no se instalan con pip.
+#
+# Requiere Python 3.10 o superior (se utiliza la sentencia match/case).
