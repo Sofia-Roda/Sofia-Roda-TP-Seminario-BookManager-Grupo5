@@ -1,16 +1,5 @@
 import datetime
 
-from book_manager.entities.entities import (
-    CotizacionDolar,
-    Editorial,
-    Genero,
-    Libro,
-    Moneda,
-    Precio,
-    Stock,
-    TipoCotizacion,
-)
-
 
 # Lectura y validación de datos
 
@@ -50,10 +39,10 @@ def leer_fecha(mensaje: str) -> datetime.date:
 
 #--------------------------------- CRUD de géneros---------------------------------
 
-def mostrar_generos(generos_repo) -> None:
+def mostrar_generos(genero_service) -> None:
     print("\n--- LISTADO DE GÉNEROS ---")
 
-    generos = generos_repo.leer_todos()
+    generos = genero_service.listar()
 
     if len(generos) == 0:
         print("No hay géneros cargados")
@@ -69,53 +58,54 @@ def mostrar_generos(generos_repo) -> None:
         )
 
 
-def registrar_genero(generos_repo) -> None:
+def registrar_genero(genero_service) -> None:
     print("\n--- NUEVO GÉNERO ---")
 
-    genero = Genero(
-        id=leer_entero("ID: "),
-        nombre=input("Nombre: "),
-        descripcion=input("Descripción: "),
-    )
-
     try:
-        generos_repo.crear(genero)
-        print("Género creado correctamente")
+        genero = genero_service.crear(
+            nombre=input("Nombre: "),
+            descripcion=input("Descripción: "),
+        )
+        print("Género creado correctamente con ID", genero.id)
     except ValueError as exc:
         print("Error:", exc)
 
 
-def editar_genero(generos_repo) -> None:
+def editar_genero(genero_service) -> None:
     print("\n--- MODIFICAR GÉNERO ---")
 
     genero_id = leer_entero("ID del género: ")
 
-    genero = generos_repo.leer_por_id(genero_id)
-
-    if genero is None:
+    if genero_service.obtener_por_id(genero_id) is None:
         print("No se encontró el género.")
         return
 
-    genero.nombre = input("Nuevo nombre: ")
-    genero.descripcion = input("Nueva descripción: ")
+    try:
+        genero_service.actualizar(
+            genero_id,
+            nombre=input("Nuevo nombre: "),
+            descripcion=input("Nueva descripción: "),
+        )
+        print("Género actualizado correctamente.")
+    except ValueError as exc:
+        print("Error:", exc)
 
-    generos_repo.actualizar(genero)
 
-    print("Género actualizado correctamente.")
-
-
-def borrar_genero(generos_repo) -> None:
+def borrar_genero(genero_service) -> None:
     print("\n--- ELIMINAR GÉNERO ---")
 
     genero_id = leer_entero("ID del género: ")
 
-    if generos_repo.eliminar(genero_id):
-        print("Género eliminado correctamente.")
-    else:
-        print("No se encontró el género.")
+    try:
+        if genero_service.eliminar(genero_id):
+            print("Género eliminado correctamente.")
+        else:
+            print("No se encontró el género.")
+    except ValueError as exc:
+        print("Error:", exc)
 
 
-def gestionar_generos(generos_repo) -> None:
+def gestionar_generos(genero_service) -> None:
     while True:
 
         print("\n----- GÉNEROS -----")
@@ -130,16 +120,16 @@ def gestionar_generos(generos_repo) -> None:
         match seleccion:
 
             case "1":
-                mostrar_generos(generos_repo)
+                mostrar_generos(genero_service)
 
             case "2":
-                registrar_genero(generos_repo)
+                registrar_genero(genero_service)
 
             case "3":
-                editar_genero(generos_repo)
+                editar_genero(genero_service)
 
             case "4":
-                borrar_genero(generos_repo)
+                borrar_genero(genero_service)
 
             case "0":
                 break
@@ -151,10 +141,10 @@ def gestionar_generos(generos_repo) -> None:
 #--------------------------------- CRUD de editoriales ---------------------------------
 
 
-def mostrar_editoriales(editoriales_repo) -> None:
+def mostrar_editoriales(editorial_service) -> None:
     print("\n--- LISTADO DE EDITORIALES ---")
 
-    editoriales = editoriales_repo.leer_todos()
+    editoriales = editorial_service.listar()
 
     if len(editoriales) == 0:
         print("No hay editoriales cargadas.")
@@ -172,59 +162,60 @@ def mostrar_editoriales(editoriales_repo) -> None:
         )
 
 
-def registrar_editorial(editoriales_repo) -> None:
+def registrar_editorial(editorial_service) -> None:
     print("\n--- NUEVA EDITORIAL ---")
 
-    editorial = Editorial(
-        id=leer_entero("ID: "),
-        nombre=input("Nombre: "),
-        cuit=input("CUIT: "),
-        email=input("Email: "),
-        telefono=input("Teléfono: "),
-        pais=input("País: "),
-    )
-
     try:
-        editoriales_repo.crear(editorial)
-        print("Editorial creada correctamente.")
+        editorial = editorial_service.crear(
+            nombre=input("Nombre: "),
+            cuit=input("CUIT: "),
+            email=input("Email: "),
+            telefono=input("Teléfono: "),
+            pais=input("País: "),
+        )
+        print("Editorial creada correctamente con ID", editorial.id)
     except ValueError as exc:
         print("Error:", exc)
 
 
-def editar_editorial(editoriales_repo) -> None:
+def editar_editorial(editorial_service) -> None:
     print("\n--- MODIFICAR EDITORIAL ---")
 
     editorial_id = leer_entero("ID de la editorial: ")
 
-    editorial = editoriales_repo.leer_por_id(editorial_id)
-
-    if editorial is None:
+    if editorial_service.obtener_por_id(editorial_id) is None:
         print("No se encontró la editorial.")
         return
 
-    editorial.nombre = input("Nuevo nombre: ")
-    editorial.cuit = input("Nuevo CUIT: ")
-    editorial.email = input("Nuevo email: ")
-    editorial.telefono = input("Nuevo teléfono: ")
-    editorial.pais = input("Nuevo país: ")
+    try:
+        editorial_service.actualizar(
+            editorial_id,
+            nombre=input("Nuevo nombre: "),
+            cuit=input("Nuevo CUIT: "),
+            email=input("Nuevo email: "),
+            telefono=input("Nuevo teléfono: "),
+            pais=input("Nuevo país: "),
+        )
+        print("Editorial actualizada correctamente.")
+    except ValueError as exc:
+        print("Error:", exc)
 
-    editoriales_repo.actualizar(editorial)
 
-    print("Editorial actualizada correctamente.")
-
-
-def borrar_editorial(editoriales_repo) -> None:
+def borrar_editorial(editorial_service) -> None:
     print("\n--- ELIMINAR EDITORIAL ---")
 
     editorial_id = leer_entero("ID de la editorial: ")
 
-    if editoriales_repo.eliminar(editorial_id):
-        print("Editorial eliminada correctamente.")
-    else:
-        print("No se encontró la editorial.")
+    try:
+        if editorial_service.eliminar(editorial_id):
+            print("Editorial eliminada correctamente.")
+        else:
+            print("No se encontró la editorial.")
+    except ValueError as exc:
+        print("Error:", exc)
 
 
-def gestionar_editoriales(editoriales_repo) -> None:
+def gestionar_editoriales(editorial_service) -> None:
     while True:
 
         print("\n=== EDITORIALES ===")
@@ -239,16 +230,16 @@ def gestionar_editoriales(editoriales_repo) -> None:
         match seleccion:
 
             case "1":
-                mostrar_editoriales(editoriales_repo)
+                mostrar_editoriales(editorial_service)
 
             case "2":
-                registrar_editorial(editoriales_repo)
+                registrar_editorial(editorial_service)
 
             case "3":
-                editar_editorial(editoriales_repo)
+                editar_editorial(editorial_service)
 
             case "4":
-                borrar_editorial(editoriales_repo)
+                borrar_editorial(editorial_service)
 
             case "0":
                 break
@@ -260,10 +251,10 @@ def gestionar_editoriales(editoriales_repo) -> None:
 #--------------------------------- CRUD de monedas---------------------------------
 
 
-def mostrar_monedas(monedas_repo) -> None:
+def mostrar_monedas(moneda_service) -> None:
     print("\n--- LISTADO DE MONEDAS ---")
 
-    monedas = monedas_repo.leer_todos()
+    monedas = moneda_service.listar()
 
     if len(monedas) == 0:
         print("No hay monedas cargadas.")
@@ -281,55 +272,53 @@ def mostrar_monedas(monedas_repo) -> None:
         )
 
 
-def registrar_moneda(monedas_repo) -> None:
+def registrar_moneda(moneda_service) -> None:
     print("\n--- NUEVA MONEDA ---")
 
-    moneda = Moneda(
-        id=leer_entero("ID: "),
-        nombre=input("Nombre: "),
-        simbolo=input("Símbolo: "),
-        codigo=input("Código: "),
-    )
-
     try:
-        monedas_repo.crear(moneda)
-        print("Moneda creada correctamente.")
+        moneda = moneda_service.crear(
+            nombre=input("Nombre: "),
+            simbolo=input("Símbolo: "),
+            codigo=input("Código: "),
+        )
+        print("Moneda creada correctamente con ID", moneda.id)
     except ValueError as exc:
         print("Error:", exc)
 
 
-def editar_moneda(monedas_repo) -> None:
+def editar_moneda(moneda_service) -> None:
     print("\n--- MODIFICAR MONEDA ---")
 
     moneda_id = leer_entero("ID de la moneda: ")
 
-    moneda = monedas_repo.leer_por_id(moneda_id)
-
-    if moneda is None:
+    if moneda_service.obtener_por_id(moneda_id) is None:
         print("No se encontró la moneda.")
         return
 
-    moneda.nombre = input("Nuevo nombre: ")
-    moneda.simbolo = input("Nuevo símbolo: ")
-    moneda.codigo = input("Nuevo código: ")
+    try:
+        moneda_service.actualizar(
+            moneda_id,
+            nombre=input("Nuevo nombre: "),
+            simbolo=input("Nuevo símbolo: "),
+            codigo=input("Nuevo código: "),
+        )
+        print("Moneda actualizada correctamente.")
+    except ValueError as exc:
+        print("Error:", exc)
 
-    monedas_repo.actualizar(moneda)
 
-    print("Moneda actualizada correctamente.")
-
-
-def borrar_moneda(monedas_repo) -> None:
+def borrar_moneda(moneda_service) -> None:
     print("\n--- ELIMINAR MONEDA ---")
 
     moneda_id = leer_entero("ID de la moneda: ")
 
-    if monedas_repo.eliminar(moneda_id):
+    if moneda_service.eliminar(moneda_id):
         print("Moneda eliminada correctamente.")
     else:
         print("No se encontró la moneda.")
 
 
-def gestionar_monedas(monedas_repo) -> None:
+def gestionar_monedas(moneda_service) -> None:
     while True:
 
         print("\n=== MONEDAS ===")
@@ -344,16 +333,16 @@ def gestionar_monedas(monedas_repo) -> None:
         match seleccion:
 
             case "1":
-                mostrar_monedas(monedas_repo)
+                mostrar_monedas(moneda_service)
 
             case "2":
-                registrar_moneda(monedas_repo)
+                registrar_moneda(moneda_service)
 
             case "3":
-                editar_moneda(monedas_repo)
+                editar_moneda(moneda_service)
 
             case "4":
-                borrar_moneda(monedas_repo)
+                borrar_moneda(moneda_service)
 
             case "0":
                 break
@@ -365,10 +354,10 @@ def gestionar_monedas(monedas_repo) -> None:
 #--------------------------------- CRUD de tipos de cotización ---------------------------------
 
 
-def mostrar_tipos_cotizacion(tipos_repo) -> None:
+def mostrar_tipos_cotizacion(tipo_service) -> None:
     print("\n--- LISTADO DE TIPOS DE COTIZACIÓN ---")
 
-    tipos = tipos_repo.leer_todos()
+    tipos = tipo_service.listar()
 
     if len(tipos) == 0:
         print("No hay tipos de cotización cargados.")
@@ -384,53 +373,51 @@ def mostrar_tipos_cotizacion(tipos_repo) -> None:
         )
 
 
-def registrar_tipo_cotizacion(tipos_repo) -> None:
+def registrar_tipo_cotizacion(tipo_service) -> None:
     print("\n--- NUEVO TIPO DE COTIZACIÓN ---")
 
-    tipo = TipoCotizacion(
-        id=leer_entero("ID: "),
-        nombre=input("Nombre: "),
-        descripcion=input("Descripción: "),
-    )
-
     try:
-        tipos_repo.crear(tipo)
-        print("Tipo de cotización creado correctamente.")
+        tipo = tipo_service.crear(
+            nombre=input("Nombre: "),
+            descripcion=input("Descripción: "),
+        )
+        print("Tipo de cotización creado correctamente con ID", tipo.id)
     except ValueError as exc:
         print("Error:", exc)
 
 
-def editar_tipo_cotizacion(tipos_repo) -> None:
+def editar_tipo_cotizacion(tipo_service) -> None:
     print("\n--- MODIFICAR TIPO DE COTIZACIÓN ---")
 
     tipo_id = leer_entero("ID del tipo: ")
 
-    tipo = tipos_repo.leer_por_id(tipo_id)
-
-    if tipo is None:
+    if tipo_service.obtener_por_id(tipo_id) is None:
         print("No se encontró el tipo de cotización.")
         return
 
-    tipo.nombre = input("Nuevo nombre: ")
-    tipo.descripcion = input("Nueva descripción: ")
+    try:
+        tipo_service.actualizar(
+            tipo_id,
+            nombre=input("Nuevo nombre: "),
+            descripcion=input("Nueva descripción: "),
+        )
+        print("Tipo de cotización actualizado correctamente.")
+    except ValueError as exc:
+        print("Error:", exc)
 
-    tipos_repo.actualizar(tipo)
 
-    print("Tipo de cotización actualizado correctamente.")
-
-
-def borrar_tipo_cotizacion(tipos_repo) -> None:
+def borrar_tipo_cotizacion(tipo_service) -> None:
     print("\n--- ELIMINAR TIPO DE COTIZACIÓN ---")
 
     tipo_id = leer_entero("ID del tipo: ")
 
-    if tipos_repo.eliminar(tipo_id):
+    if tipo_service.eliminar(tipo_id):
         print("Tipo de cotización eliminado correctamente.")
     else:
         print("No se encontró el tipo de cotización.")
 
 
-def gestionar_tipos_cotizacion(tipos_repo) -> None:
+def gestionar_tipos_cotizacion(tipo_service) -> None:
     while True:
 
         print("\n=== TIPOS DE COTIZACIÓN ===")
@@ -445,16 +432,16 @@ def gestionar_tipos_cotizacion(tipos_repo) -> None:
         match seleccion:
 
             case "1":
-                mostrar_tipos_cotizacion(tipos_repo)
+                mostrar_tipos_cotizacion(tipo_service)
 
             case "2":
-                registrar_tipo_cotizacion(tipos_repo)
+                registrar_tipo_cotizacion(tipo_service)
 
             case "3":
-                editar_tipo_cotizacion(tipos_repo)
+                editar_tipo_cotizacion(tipo_service)
 
             case "4":
-                borrar_tipo_cotizacion(tipos_repo)
+                borrar_tipo_cotizacion(tipo_service)
 
             case "0":
                 break
@@ -466,10 +453,10 @@ def gestionar_tipos_cotizacion(tipos_repo) -> None:
 #--------------------------------- CRUD de libros ---------------------------------
 
 
-def mostrar_libros(libros_repo) -> None:
+def mostrar_libros(libro_service) -> None:
     print("\n--- LISTADO DE LIBROS ---")
 
-    libros = libros_repo.leer_todos()
+    libros = libro_service.listar()
 
     if len(libros) == 0:
         print("No hay libros cargados.")
@@ -489,136 +476,79 @@ def mostrar_libros(libros_repo) -> None:
         )
 
 
-def registrar_libro(
-    libros_repo,
-    generos_repo,
-    editoriales_repo,
-) -> None:
-
+def registrar_libro(libro_service) -> None:
     print("\n--- NUEVO LIBRO ---")
 
-    genero = generos_repo.leer_por_id(
-        leer_entero("ID del género: ")
-    )
-
-    if genero is None:
-        print("No existe un género con ese ID.")
-        return
-
-    editorial = editoriales_repo.leer_por_id(
-        leer_entero("ID de la editorial: ")
-    )
-
-    if editorial is None:
-        print("No existe una editorial con ese ID.")
-        return
-
-    libro = Libro(
-        id=leer_entero("ID del libro: "),
-        isbn=input("ISBN: "),
-        titulo=input("Título: "),
-        autor=input("Autor: "),
-        genero=genero,
-        editorial=editorial,
-        idioma=input("Idioma: "),
-        fecha_publicacion=leer_fecha(
-            "Fecha de publicación (AAAA-MM-DD): "
-        ),
-        fecha_primera_publicacion=leer_fecha(
-            "Fecha de primera publicación (AAAA-MM-DD): "
-        ),
-        num_paginas=leer_entero("Cantidad de páginas: "),
-        peso=leer_decimal("Peso: "),
-        descripcion=input("Descripción: "),
-        ranking=leer_entero("Ranking: "),
-    )
-
     try:
-        libros_repo.crear(libro)
-        print("Libro creado correctamente.")
+        libro = libro_service.crear(
+            genero_id=leer_entero("ID del género: "),
+            editorial_id=leer_entero("ID de la editorial: "),
+            isbn=input("ISBN: "),
+            titulo=input("Título: "),
+            autor=input("Autor: "),
+            idioma=input("Idioma: "),
+            fecha_publicacion=leer_fecha(
+                "Fecha de publicación (AAAA-MM-DD): "
+            ),
+            fecha_primera_publicacion=leer_fecha(
+                "Fecha de primera publicación (AAAA-MM-DD): "
+            ),
+            num_paginas=leer_entero("Cantidad de páginas: "),
+            peso=leer_decimal("Peso: "),
+            descripcion=input("Descripción: "),
+            ranking=leer_entero("Ranking: "),
+        )
+        print("Libro creado correctamente con ID", libro.id)
     except ValueError as exc:
         print("Error:", exc)
 
 
-def editar_libro(
-    libros_repo,
-    generos_repo,
-    editoriales_repo,
-) -> None:
-
+def editar_libro(libro_service) -> None:
     print("\n--- MODIFICAR LIBRO ---")
 
     libro_id = leer_entero("ID del libro: ")
 
-    libro = libros_repo.leer_por_id(libro_id)
-
-    if libro is None:
+    if libro_service.obtener_por_id(libro_id) is None:
         print("No se encontró el libro.")
         return
 
-    genero = generos_repo.leer_por_id(
-        leer_entero("Nuevo ID del género: ")
-    )
-
-    if genero is None:
-        print("No existe un género con ese ID.")
-        return
-
-    editorial = editoriales_repo.leer_por_id(
-        leer_entero("Nuevo ID de la editorial: ")
-    )
-
-    if editorial is None:
-        print("No existe una editorial con ese ID.")
-        return
-
-    libro.isbn = input("Nuevo ISBN: ")
-    libro.titulo = input("Nuevo título: ")
-    libro.autor = input("Nuevo autor: ")
-    libro.genero = genero
-    libro.editorial = editorial
-    libro.idioma = input("Nuevo idioma: ")
-
-    libro.fecha_publicacion = leer_fecha(
-        "Nueva fecha de publicación (AAAA-MM-DD): "
-    )
-
-    libro.fecha_primera_publicacion = leer_fecha(
-        "Nueva fecha de primera publicación (AAAA-MM-DD): "
-    )
-
-    libro.num_paginas = leer_entero(
-        "Nueva cantidad de páginas: "
-    )
-
-    libro.peso = leer_decimal("Nuevo peso: ")
-
-    libro.descripcion = input("Nueva descripción: ")
-
-    libro.ranking = leer_entero("Nuevo ranking: ")
-
-    libros_repo.actualizar(libro)
-
-    print("Libro actualizado correctamente.")
+    try:
+        libro_service.actualizar(
+            libro_id,
+            genero_id=leer_entero("Nuevo ID del género: "),
+            editorial_id=leer_entero("Nuevo ID de la editorial: "),
+            isbn=input("Nuevo ISBN: "),
+            titulo=input("Nuevo título: "),
+            autor=input("Nuevo autor: "),
+            idioma=input("Nuevo idioma: "),
+            fecha_publicacion=leer_fecha(
+                "Nueva fecha de publicación (AAAA-MM-DD): "
+            ),
+            fecha_primera_publicacion=leer_fecha(
+                "Nueva fecha de primera publicación (AAAA-MM-DD): "
+            ),
+            num_paginas=leer_entero("Nueva cantidad de páginas: "),
+            peso=leer_decimal("Nuevo peso: "),
+            descripcion=input("Nueva descripción: "),
+            ranking=leer_entero("Nuevo ranking: "),
+        )
+        print("Libro actualizado correctamente.")
+    except ValueError as exc:
+        print("Error:", exc)
 
 
-def borrar_libro(libros_repo) -> None:
+def borrar_libro(libro_service) -> None:
     print("\n--- ELIMINAR LIBRO ---")
 
     libro_id = leer_entero("ID del libro: ")
 
-    if libros_repo.eliminar(libro_id):
+    if libro_service.eliminar(libro_id):
         print("Libro eliminado correctamente.")
     else:
         print("No se encontró el libro.")
 
 
-def gestionar_libros(
-    libros_repo,
-    generos_repo,
-    editoriales_repo,
-) -> None:
-
+def gestionar_libros(libro_service) -> None:
     while True:
 
         print("\n=== LIBROS ===")
@@ -633,24 +563,16 @@ def gestionar_libros(
         match seleccion:
 
             case "1":
-                mostrar_libros(libros_repo)
+                mostrar_libros(libro_service)
 
             case "2":
-                registrar_libro(
-                    libros_repo,
-                    generos_repo,
-                    editoriales_repo,
-                )
+                registrar_libro(libro_service)
 
             case "3":
-                editar_libro(
-                    libros_repo,
-                    generos_repo,
-                    editoriales_repo,
-                )
+                editar_libro(libro_service)
 
             case "4":
-                borrar_libro(libros_repo)
+                borrar_libro(libro_service)
 
             case "0":
                 break
@@ -662,10 +584,10 @@ def gestionar_libros(
 #--------------------------------- CRUD de precios ---------------------------------
 
 
-def mostrar_precios(precios_repo) -> None:
+def mostrar_precios(precio_service) -> None:
     print("\n--- LISTADO DE PRECIOS ---")
 
-    precios = precios_repo.leer_todos()
+    precios = precio_service.listar()
 
     if len(precios) == 0:
         print("No hay precios cargados.")
@@ -682,102 +604,52 @@ def mostrar_precios(precios_repo) -> None:
         )
 
 
-def registrar_precio(
-    precios_repo,
-    libros_repo,
-    monedas_repo,
-) -> None:
-
+def registrar_precio(precio_service) -> None:
     print("\n--- NUEVO PRECIO ---")
 
-    libro = libros_repo.leer_por_id(
-        leer_entero("ID del libro: ")
-    )
-
-    if libro is None:
-        print("No existe un libro con ese ID.")
-        return
-
-    moneda = monedas_repo.leer_por_id(
-        leer_entero("ID de la moneda: ")
-    )
-
-    if moneda is None:
-        print("No existe una moneda con ese ID.")
-        return
-
-    precio = Precio(
-        id=leer_entero("ID del precio: "),
-        libro=libro,
-        moneda=moneda,
-        valor=leer_decimal("Valor: "),
-    )
-
     try:
-        precios_repo.crear(precio)
-        print("Precio creado correctamente.")
+        precio = precio_service.crear(
+            libro_id=leer_entero("ID del libro: "),
+            moneda_id=leer_entero("ID de la moneda: "),
+            valor=leer_decimal("Valor: "),
+        )
+        print("Precio creado correctamente con ID", precio.id)
     except ValueError as exc:
         print("Error:", exc)
 
 
-def editar_precio(
-    precios_repo,
-    libros_repo,
-    monedas_repo,
-) -> None:
-
+def editar_precio(precio_service) -> None:
     print("\n--- MODIFICAR PRECIO ---")
 
     precio_id = leer_entero("ID del precio: ")
 
-    precio = precios_repo.leer_por_id(precio_id)
-
-    if precio is None:
+    if precio_service.obtener_por_id(precio_id) is None:
         print("No se encontró el precio.")
         return
 
-    libro = libros_repo.leer_por_id(
-        leer_entero("Nuevo ID del libro: ")
-    )
-
-    if libro is None:
-        print("No existe un libro con ese ID.")
-        return
-
-    moneda = monedas_repo.leer_por_id(
-        leer_entero("Nuevo ID de la moneda: ")
-    )
-
-    if moneda is None:
-        print("No existe una moneda con ese ID.")
-        return
-
-    precio.libro = libro
-    precio.moneda = moneda
-    precio.valor = leer_decimal("Nuevo valor: ")
-
-    precios_repo.actualizar(precio)
-
-    print("Precio actualizado correctamente.")
+    try:
+        precio_service.actualizar(
+            precio_id,
+            moneda_id=leer_entero("Nuevo ID de la moneda: "),
+            valor=leer_decimal("Nuevo valor: "),
+        )
+        print("Precio actualizado correctamente.")
+    except ValueError as exc:
+        print("Error:", exc)
 
 
-def borrar_precio(precios_repo) -> None:
+def borrar_precio(precio_service) -> None:
     print("\n--- ELIMINAR PRECIO ---")
 
     precio_id = leer_entero("ID del precio: ")
 
-    if precios_repo.eliminar(precio_id):
+    if precio_service.eliminar(precio_id):
         print("Precio eliminado correctamente.")
     else:
         print("No se encontró el precio.")
 
 
-def gestionar_precios(
-    precios_repo,
-    libros_repo,
-    monedas_repo,
-) -> None:
-
+def gestionar_precios(precio_service) -> None:
     while True:
 
         print("\n=== PRECIOS ===")
@@ -792,24 +664,16 @@ def gestionar_precios(
         match seleccion:
 
             case "1":
-                mostrar_precios(precios_repo)
+                mostrar_precios(precio_service)
 
             case "2":
-                registrar_precio(
-                    precios_repo,
-                    libros_repo,
-                    monedas_repo,
-                )
+                registrar_precio(precio_service)
 
             case "3":
-                editar_precio(
-                    precios_repo,
-                    libros_repo,
-                    monedas_repo,
-                )
+                editar_precio(precio_service)
 
             case "4":
-                borrar_precio(precios_repo)
+                borrar_precio(precio_service)
 
             case "0":
                 break
@@ -821,14 +685,14 @@ def gestionar_precios(
 #--------------------------------- CRUD de stock---------------------------------
 
 
-def mostrar_stock(stock_repo, libros_repo) -> None:
+def mostrar_stock(stock_service, libro_service) -> None:
     print("\n--- LISTADO DE STOCK ---")
 
     hay_registros = False
 
-    for libro in libros_repo.leer_todos():
+    for libro in libro_service.listar():
 
-        stock = stock_repo.leer_por_libro(libro.id)
+        stock = stock_service.obtener_por_libro(libro.id)
 
         if stock is not None:
             hay_registros = True
@@ -852,71 +716,64 @@ def mostrar_stock(stock_repo, libros_repo) -> None:
         print("No hay registros de stock cargados.")
 
 
-def registrar_stock(stock_repo, libros_repo) -> None:
+def registrar_stock(stock_service) -> None:
     print("\n--- NUEVO STOCK ---")
 
-    libro = libros_repo.leer_por_id(
-        leer_entero("ID del libro: ")
-    )
-
-    if libro is None:
-        print("No existe un libro con ese ID.")
-        return
-
-    stock = Stock(
-        id=leer_entero("ID del stock: "),
-        libro=libro,
-        cantidad=leer_entero("Cantidad: "),
-        estado=input("Estado: "),
-        ubicacion=input("Ubicación: "),
-        fecha_ingreso=leer_fecha(
-            "Fecha de ingreso (AAAA-MM-DD): "
-        ),
-    )
+    estados = ", ".join(sorted(stock_service.ESTADOS_VALIDOS))
 
     try:
-        stock_repo.crear(stock)
+        stock_service.crear(
+            libro_id=leer_entero("ID del libro: "),
+            cantidad=leer_entero("Cantidad: "),
+            estado=input(f"Estado ({estados}): "),
+            ubicacion=input("Ubicación: "),
+            fecha_ingreso=leer_fecha(
+                "Fecha de ingreso (AAAA-MM-DD): "
+            ),
+        )
         print("Stock creado correctamente.")
     except ValueError as exc:
         print("Error:", exc)
 
 
-def editar_stock(stock_repo) -> None:
+def editar_stock(stock_service) -> None:
     print("\n--- MODIFICAR STOCK ---")
 
     libro_id = leer_entero("ID del libro: ")
 
-    stock = stock_repo.leer_por_libro(libro_id)
-
-    if stock is None:
+    if stock_service.obtener_por_libro(libro_id) is None:
         print("No se encontró stock para ese libro.")
         return
 
-    stock.cantidad = leer_entero("Nueva cantidad: ")
-    stock.estado = input("Nuevo estado: ")
-    stock.ubicacion = input("Nueva ubicación: ")
+    estados = ", ".join(sorted(stock_service.ESTADOS_VALIDOS))
 
-    stock.fecha_ingreso = leer_fecha(
-        "Nueva fecha de ingreso (AAAA-MM-DD): "
-    )
+    try:
+        stock_service.actualizar(
+            libro_id,
+            cantidad=leer_entero("Nueva cantidad: "),
+            estado=input(f"Nuevo estado ({estados}): "),
+            ubicacion=input("Nueva ubicación: "),
+            fecha_ingreso=leer_fecha(
+                "Nueva fecha de ingreso (AAAA-MM-DD): "
+            ),
+        )
+        print("Stock actualizado correctamente.")
+    except ValueError as exc:
+        print("Error:", exc)
 
-    stock_repo.actualizar(stock)
 
-    print("Stock actualizado correctamente.")
-
-
-def borrar_stock(stock_repo) -> None:
+def borrar_stock(stock_service) -> None:
     print("\n--- ELIMINAR STOCK ---")
 
     libro_id = leer_entero("ID del libro: ")
 
-    if stock_repo.eliminar(libro_id):
+    if stock_service.eliminar(libro_id):
         print("Stock eliminado correctamente.")
     else:
         print("No se encontró stock para ese libro.")
 
 
-def gestionar_stock(stock_repo, libros_repo) -> None:
+def gestionar_stock(stock_service, libro_service) -> None:
     while True:
 
         print("\n=== STOCK ===")
@@ -931,22 +788,16 @@ def gestionar_stock(stock_repo, libros_repo) -> None:
         match seleccion:
 
             case "1":
-                mostrar_stock(
-                    stock_repo,
-                    libros_repo,
-                )
+                mostrar_stock(stock_service, libro_service)
 
             case "2":
-                registrar_stock(
-                    stock_repo,
-                    libros_repo,
-                )
+                registrar_stock(stock_service)
 
             case "3":
-                editar_stock(stock_repo)
+                editar_stock(stock_service)
 
             case "4":
-                borrar_stock(stock_repo)
+                borrar_stock(stock_service)
 
             case "0":
                 break
@@ -958,24 +809,14 @@ def gestionar_stock(stock_repo, libros_repo) -> None:
 #--------------------------------- CRUD de cotizaciones---------------------------------
 
 
-def mostrar_cotizaciones(
-    cotizaciones_repo,
-    tipos_repo,
-) -> None:
-
+def mostrar_cotizaciones(cotizacion_service, tipo_service) -> None:
     print("\n--- LISTADO DE COTIZACIONES ---")
 
     hay_registros = False
 
-    for tipo in tipos_repo.leer_todos():
+    for tipo in tipo_service.listar():
 
-        cotizaciones = (
-            cotizaciones_repo.leer_historico_por_tipo(
-                tipo.id
-            )
-        )
-
-        for cotizacion in cotizaciones:
+        for cotizacion in cotizacion_service.listar_historico(tipo.id):
 
             hay_registros = True
 
@@ -994,97 +835,54 @@ def mostrar_cotizaciones(
         print("No hay cotizaciones cargadas.")
 
 
-def registrar_cotizacion(
-    cotizaciones_repo,
-    tipos_repo,
-) -> None:
-
+def registrar_cotizacion(cotizacion_service) -> None:
     print("\n--- NUEVA COTIZACIÓN ---")
 
-    tipo = tipos_repo.leer_por_id(
-        leer_entero(
-            "ID del tipo de cotización: "
-        )
-    )
-
-    if tipo is None:
-        print(
-            "No existe un tipo de cotización con ese ID."
-        )
-        return
-
-    cotizacion = CotizacionDolar(
-        id=leer_entero("ID de la cotización: "),
-        tipo_cotizacion=tipo,
-        fecha=leer_fecha(
-            "Fecha (AAAA-MM-DD): "
-        ),
-        valor=leer_decimal("Valor: "),
-    )
-
     try:
-        cotizaciones_repo.crear(cotizacion)
+        cotizacion_service.crear(
+            tipo_cotizacion_id=leer_entero("ID del tipo de cotización: "),
+            fecha=leer_fecha("Fecha (AAAA-MM-DD): "),
+            valor=leer_decimal("Valor: "),
+        )
         print("Cotización creada correctamente.")
     except ValueError as exc:
         print("Error:", exc)
 
 
-def editar_cotizacion(cotizaciones_repo) -> None:
+def editar_cotizacion(cotizacion_service) -> None:
     print("\n--- MODIFICAR COTIZACIÓN ---")
 
-    tipo_id = leer_entero(
-        "ID del tipo de cotización: "
-    )
+    tipo_id = leer_entero("ID del tipo de cotización: ")
+    fecha = leer_fecha("Fecha de la cotización (AAAA-MM-DD): ")
 
-    fecha = leer_fecha(
-        "Fecha de la cotización (AAAA-MM-DD): "
-    )
-
-    cotizacion = (
-        cotizaciones_repo.leer_por_tipo_y_fecha(
-            tipo_id,
-            fecha,
-        )
-    )
-
-    if cotizacion is None:
+    if cotizacion_service.obtener_por_tipo_y_fecha(tipo_id, fecha) is None:
         print("No se encontró la cotización.")
         return
 
-    cotizacion.valor = leer_decimal(
-        "Nuevo valor: "
-    )
+    try:
+        cotizacion_service.actualizar(
+            tipo_id,
+            fecha,
+            valor=leer_decimal("Nuevo valor: "),
+        )
+        print("Cotización actualizada correctamente.")
+    except ValueError as exc:
+        print("Error:", exc)
 
-    cotizaciones_repo.actualizar(cotizacion)
 
-    print("Cotización actualizada correctamente.")
-
-
-def borrar_cotizacion(cotizaciones_repo) -> None:
+def borrar_cotizacion(cotizacion_service) -> None:
     print("\n--- ELIMINAR COTIZACIÓN ---")
 
-    tipo_id = leer_entero(
-        "ID del tipo de cotización: "
-    )
+    tipo_id = leer_entero("ID del tipo de cotización: ")
+    fecha = leer_fecha("Fecha de la cotización (AAAA-MM-DD): ")
 
-    fecha = leer_fecha(
-        "Fecha de la cotización (AAAA-MM-DD): "
-    )
-
-    if cotizaciones_repo.eliminar(
-        tipo_id,
-        fecha,
-    ):
+    if cotizacion_service.eliminar(tipo_id, fecha):
         print("Cotización eliminada correctamente.")
     else:
         print("No se encontró la cotización.")
 
 
-def gestionar_cotizaciones(
-    cotizaciones_repo,
-    tipos_repo,
-) -> None:
-
+def gestionar_cotizaciones(cotizacion_service, tipo_service) -> None:
     while True:
 
         print("\n=== COTIZACIONES DEL DÓLAR ===")
@@ -1099,26 +897,16 @@ def gestionar_cotizaciones(
         match seleccion:
 
             case "1":
-                mostrar_cotizaciones(
-                    cotizaciones_repo,
-                    tipos_repo,
-                )
+                mostrar_cotizaciones(cotizacion_service, tipo_service)
 
             case "2":
-                registrar_cotizacion(
-                    cotizaciones_repo,
-                    tipos_repo,
-                )
+                registrar_cotizacion(cotizacion_service)
 
             case "3":
-                editar_cotizacion(
-                    cotizaciones_repo
-                )
+                editar_cotizacion(cotizacion_service)
 
             case "4":
-                borrar_cotizacion(
-                    cotizaciones_repo
-                )
+                borrar_cotizacion(cotizacion_service)
 
             case "0":
                 break
@@ -1129,7 +917,7 @@ def gestionar_cotizaciones(
 
 # Menú principal
 
-def iniciar_menu(repositorios: dict) -> None:
+def iniciar_menu(servicios: dict) -> None:
 
     while True:
 
@@ -1152,53 +940,30 @@ def iniciar_menu(repositorios: dict) -> None:
         match seleccion:
 
             case "1":
-                gestionar_generos(
-                    repositorios["generos"]
-                )
+                gestionar_generos(servicios["generos"])
 
             case "2":
-                gestionar_editoriales(
-                    repositorios["editoriales"]
-                )
+                gestionar_editoriales(servicios["editoriales"])
 
             case "3":
-                gestionar_monedas(
-                    repositorios["monedas"]
-                )
+                gestionar_monedas(servicios["monedas"])
 
             case "4":
-                gestionar_tipos_cotizacion(
-                    repositorios[
-                        "tipos_cotizacion"
-                    ]
-                )
+                gestionar_tipos_cotizacion(servicios["tipos_cotizacion"])
 
             case "5":
-                gestionar_libros(
-                    repositorios["libros"],
-                    repositorios["generos"],
-                    repositorios["editoriales"],
-                )
+                gestionar_libros(servicios["libros"])
 
             case "6":
-                gestionar_precios(
-                    repositorios["precios"],
-                    repositorios["libros"],
-                    repositorios["monedas"],
-                )
+                gestionar_precios(servicios["precios"])
 
             case "7":
-                gestionar_stock(
-                    repositorios["stock"],
-                    repositorios["libros"],
-                )
+                gestionar_stock(servicios["stock"], servicios["libros"])
 
             case "8":
                 gestionar_cotizaciones(
-                    repositorios["cotizaciones"],
-                    repositorios[
-                        "tipos_cotizacion"
-                    ],
+                    servicios["cotizaciones"],
+                    servicios["tipos_cotizacion"],
                 )
 
             case "0":

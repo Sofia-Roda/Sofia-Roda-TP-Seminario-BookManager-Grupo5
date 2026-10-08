@@ -33,8 +33,10 @@ def _siguiente_id(entidades: List[EntidadBase]) -> int:
 class GeneroService:
     """Lógica de negocio para la gestión de géneros literarios."""
 
-    def __init__(self, repositorio: RepositorioGenero) -> None:
+    def __init__(self, repositorio: RepositorioGenero,
+                 repositorio_libros: RepositorioLibro) -> None:
         self._repositorio = repositorio
+        self._repositorio_libros = repositorio_libros
 
     def crear(self, nombre: str, descripcion: Optional[str] = None) -> Genero:
         """Valida los datos y crea un nuevo género.
@@ -74,7 +76,18 @@ class GeneroService:
         return self._repositorio.actualizar(genero)
 
     def eliminar(self, id: int) -> bool:
-        """Elimina un género por su id. Devuelve True si existía."""
+        """Elimina un género por su id. Devuelve True si existía.
+
+        Raises:
+            ValueError: Si hay libros asociados al género.
+        """
+        libros_asociados = [libro for libro in self._repositorio_libros.leer_todos()
+                            if libro.genero.id == id]
+        if libros_asociados:
+            raise ValueError(
+                f"No se puede eliminar el género: tiene "
+                f"{len(libros_asociados)} libro(s) asociado(s)."
+            )
         return self._repositorio.eliminar(id)
 
     @staticmethod
@@ -86,8 +99,10 @@ class GeneroService:
 class EditorialService:
     """Lógica de negocio para la gestión de editoriales."""
 
-    def __init__(self, repositorio: RepositorioEditorial) -> None:
+    def __init__(self, repositorio: RepositorioEditorial,
+                 repositorio_libros: RepositorioLibro) -> None:
         self._repositorio = repositorio
+        self._repositorio_libros = repositorio_libros
 
     def crear(self, nombre: str, cuit: str, email: str, telefono: str,
               pais: str) -> Editorial:
@@ -141,7 +156,18 @@ class EditorialService:
         return self._repositorio.actualizar(editorial)
 
     def eliminar(self, id: int) -> bool:
-        """Elimina una editorial por su id. Devuelve True si existía."""
+        """Elimina una editorial por su id. Devuelve True si existía.
+
+        Raises:
+            ValueError: Si hay libros asociados a la editorial.
+        """
+        libros_asociados = [libro for libro in self._repositorio_libros.leer_todos()
+                            if libro.editorial.id == id]
+        if libros_asociados:
+            raise ValueError(
+                f"No se puede eliminar la editorial: tiene "
+                f"{len(libros_asociados)} libro(s) asociado(s)."
+            )
         return self._repositorio.eliminar(id)
 
     @staticmethod
