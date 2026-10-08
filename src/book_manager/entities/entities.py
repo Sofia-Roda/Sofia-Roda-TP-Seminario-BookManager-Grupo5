@@ -3,19 +3,64 @@ import datetime
 from typing import Optional
 
 
+# Validaciones reutilizadas por los setters de las entidades
+
+def _validar_texto(valor: str, campo: str) -> str:
+    """Verifica que el valor sea un texto no vacío."""
+    if not isinstance(valor, str) or not valor.strip():
+        raise ValueError(f"El campo {campo} no puede estar vacío.")
+    return valor
+
+
+def _validar_texto_opcional(valor: Optional[str], campo: str) -> Optional[str]:
+    """Verifica que el valor sea None o un texto."""
+    if valor is not None and not isinstance(valor, str):
+        raise TypeError(f"El campo {campo} debe ser un texto.")
+    return valor
+
+
+def _validar_entero(valor: int, campo: str, minimo: int) -> int:
+    """Verifica que el valor sea un entero mayor o igual al mínimo."""
+    if not isinstance(valor, int) or isinstance(valor, bool):
+        raise TypeError(f"El campo {campo} debe ser un número entero.")
+    if valor < minimo:
+        raise ValueError(f"El campo {campo} debe ser mayor o igual a {minimo}.")
+    return valor
+
+
+def _validar_positivo(valor: float, campo: str) -> float:
+    """Verifica que el valor sea un número mayor a cero."""
+    if not isinstance(valor, (int, float)) or isinstance(valor, bool):
+        raise TypeError(f"El campo {campo} debe ser numérico.")
+    if valor <= 0:
+        raise ValueError(f"El campo {campo} debe ser mayor a cero.")
+    return float(valor)
+
+
+def _validar_fecha(valor: datetime.date, campo: str) -> datetime.date:
+    """Verifica que el valor sea una fecha."""
+    if not isinstance(valor, datetime.date):
+        raise TypeError(f"El campo {campo} debe ser una fecha.")
+    return valor
+
+
+def _validar_instancia(valor: object, clase: type, campo: str) -> object:
+    """Verifica que el valor sea una instancia de la clase indicada."""
+    if not isinstance(valor, clase):
+        raise TypeError(f"El campo {campo} debe ser de tipo {clase.__name__}.")
+    return valor
+
+
 class EntidadBase:
     """Clase base para todas las entidades del sistema."""
 
     def __init__(self, id: int) -> None:
-        self._id = id
+        # El id es de solo lectura: identifica a la entidad y no debe cambiar.
+        self._id = _validar_entero(id, "id", 1)
 
     @property
     def id(self) -> int:
         return self._id
-
-    @id.setter
-    def id(self, valor: int) -> None:
-        self._id = valor
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(id={self._id})"
@@ -26,8 +71,8 @@ class Genero(EntidadBase):
 
     def __init__(self, id: int, nombre: str, descripcion: Optional[str] = None) -> None:
         super().__init__(id)
-        self._nombre = nombre
-        self._descripcion = descripcion
+        self.nombre = nombre
+        self.descripcion = descripcion
 
     @property
     def nombre(self) -> str:
@@ -35,7 +80,7 @@ class Genero(EntidadBase):
 
     @nombre.setter
     def nombre(self, valor: str) -> None:
-        self._nombre = valor
+        self._nombre = _validar_texto(valor, "nombre")
 
     @property
     def descripcion(self) -> Optional[str]:
@@ -43,10 +88,11 @@ class Genero(EntidadBase):
 
     @descripcion.setter
     def descripcion(self, valor: Optional[str]) -> None:
-        self._descripcion = valor
+        self._descripcion = _validar_texto_opcional(valor, "descripción")
 
     def __repr__(self) -> str:
         return f"Genero(id={self._id}, nombre={self._nombre})"
+
 
 class Editorial(EntidadBase):
     """Representa una editorial proveedora de libros."""
@@ -54,11 +100,11 @@ class Editorial(EntidadBase):
     def __init__(self, id: int, nombre: str, cuit: str, email: str,
                  telefono: str, pais: str) -> None:
         super().__init__(id)
-        self._nombre = nombre
-        self._cuit = cuit
-        self._email = email
-        self._telefono = telefono
-        self._pais = pais
+        self.nombre = nombre
+        self.cuit = cuit
+        self.email = email
+        self.telefono = telefono
+        self.pais = pais
 
     @property
     def nombre(self) -> str:
@@ -66,7 +112,7 @@ class Editorial(EntidadBase):
 
     @nombre.setter
     def nombre(self, valor: str) -> None:
-        self._nombre = valor
+        self._nombre = _validar_texto(valor, "nombre")
 
     @property
     def cuit(self) -> str:
@@ -74,6 +120,10 @@ class Editorial(EntidadBase):
 
     @cuit.setter
     def cuit(self, valor: str) -> None:
+        _validar_texto(valor, "CUIT")
+        solo_digitos = valor.replace("-", "")
+        if not solo_digitos.isdigit() or len(solo_digitos) != 11:
+            raise ValueError(f"CUIT inválido: {valor}. Debe tener 11 dígitos.")
         self._cuit = valor
 
     @property
@@ -82,6 +132,9 @@ class Editorial(EntidadBase):
 
     @email.setter
     def email(self, valor: str) -> None:
+        _validar_texto(valor, "email")
+        if "@" not in valor or "." not in valor.split("@")[-1]:
+            raise ValueError(f"Email inválido: {valor}.")
         self._email = valor
 
     @property
@@ -90,7 +143,7 @@ class Editorial(EntidadBase):
 
     @telefono.setter
     def telefono(self, valor: str) -> None:
-        self._telefono = valor
+        self._telefono = _validar_texto(valor, "teléfono")
 
     @property
     def pais(self) -> str:
@@ -98,7 +151,7 @@ class Editorial(EntidadBase):
 
     @pais.setter
     def pais(self, valor: str) -> None:
-        self._pais = valor
+        self._pais = _validar_texto(valor, "país")
 
     def __repr__(self) -> str:
         return f"Editorial(id={self._id}, nombre={self._nombre}, pais={self._pais})"
@@ -108,9 +161,9 @@ class Moneda(EntidadBase):
 
     def __init__(self, id: int, nombre: str, simbolo: str, codigo: str) -> None:
         super().__init__(id)
-        self._nombre = nombre
-        self._simbolo = simbolo
-        self._codigo = codigo
+        self.nombre = nombre
+        self.simbolo = simbolo
+        self.codigo = codigo
 
     @property
     def nombre(self) -> str:
@@ -118,7 +171,7 @@ class Moneda(EntidadBase):
 
     @nombre.setter
     def nombre(self, valor: str) -> None:
-        self._nombre = valor
+        self._nombre = _validar_texto(valor, "nombre")
 
     @property
     def simbolo(self) -> str:
@@ -126,7 +179,7 @@ class Moneda(EntidadBase):
 
     @simbolo.setter
     def simbolo(self, valor: str) -> None:
-        self._simbolo = valor
+        self._simbolo = _validar_texto(valor, "símbolo")
 
     @property
     def codigo(self) -> str:
@@ -134,7 +187,10 @@ class Moneda(EntidadBase):
 
     @codigo.setter
     def codigo(self, valor: str) -> None:
-        self._codigo = valor
+        _validar_texto(valor, "código")
+        if not valor.isalpha() or len(valor) != 3:
+            raise ValueError(f"Código de moneda inválido: {valor}. Deben ser 3 letras (ej. USD).")
+        self._codigo = valor.upper()
 
     def __repr__(self) -> str:
         return f"Moneda(id={self._id}, nombre={self._nombre}, codigo={self._codigo})"
@@ -144,8 +200,8 @@ class TipoCotizacion(EntidadBase):
 
     def __init__(self, id: int, nombre: str, descripcion: Optional[str] = None) -> None:
         super().__init__(id)
-        self._nombre = nombre
-        self._descripcion = descripcion
+        self.nombre = nombre
+        self.descripcion = descripcion
 
     @property
     def nombre(self) -> str:
@@ -153,7 +209,7 @@ class TipoCotizacion(EntidadBase):
 
     @nombre.setter
     def nombre(self, valor: str) -> None:
-        self._nombre = valor
+        self._nombre = _validar_texto(valor, "nombre")
 
     @property
     def descripcion(self) -> Optional[str]:
@@ -161,7 +217,7 @@ class TipoCotizacion(EntidadBase):
 
     @descripcion.setter
     def descripcion(self, valor: Optional[str]) -> None:
-        self._descripcion = valor
+        self._descripcion = _validar_texto_opcional(valor, "descripción")
 
     def __repr__(self) -> str:
         return f"TipoCotizacion(id={self._id}, nombre={self._nombre})"
@@ -175,18 +231,17 @@ class Libro(EntidadBase):
                  num_paginas: int, peso: float, descripcion: Optional[str] = None,
                  ranking: Optional[int] = None) -> None:
         super().__init__(id)
-        self._isbn = isbn
-        self._titulo = titulo
-        self._autor = autor
-        self._genero = genero
-        self._editorial = editorial
-        self._idioma = idioma
-        self._fecha_publicacion = fecha_publicacion
-        self._fecha_primera_publicacion = fecha_primera_publicacion
-        self._num_paginas = num_paginas
-        self._peso = peso
-        self._descripcion = descripcion
-        self._ranking = ranking
+        self.isbn = isbn
+        self.titulo = titulo
+        self.autor = autor
+        self.genero = genero
+        self.editorial = editorial
+        self.idioma = idioma
+        self.establecer_fechas(fecha_publicacion, fecha_primera_publicacion)
+        self.num_paginas = num_paginas
+        self.peso = peso
+        self.descripcion = descripcion
+        self.ranking = ranking
 
     @property
     def isbn(self) -> str:
@@ -194,6 +249,10 @@ class Libro(EntidadBase):
 
     @isbn.setter
     def isbn(self, valor: str) -> None:
+        _validar_texto(valor, "ISBN")
+        solo_digitos = valor.replace("-", "")
+        if not solo_digitos.isdigit() or len(solo_digitos) not in (10, 13):
+            raise ValueError(f"ISBN inválido: {valor}. Debe tener 10 o 13 dígitos.")
         self._isbn = valor
 
     @property
@@ -202,7 +261,7 @@ class Libro(EntidadBase):
 
     @titulo.setter
     def titulo(self, valor: str) -> None:
-        self._titulo = valor
+        self._titulo = _validar_texto(valor, "título")
 
     @property
     def autor(self) -> str:
@@ -210,7 +269,7 @@ class Libro(EntidadBase):
 
     @autor.setter
     def autor(self, valor: str) -> None:
-        self._autor = valor
+        self._autor = _validar_texto(valor, "autor")
 
     @property
     def genero(self) -> Genero:
@@ -218,7 +277,7 @@ class Libro(EntidadBase):
 
     @genero.setter
     def genero(self, valor: Genero) -> None:
-        self._genero = valor
+        self._genero = _validar_instancia(valor, Genero, "género")
 
     @property
     def editorial(self) -> Editorial:
@@ -226,7 +285,7 @@ class Libro(EntidadBase):
 
     @editorial.setter
     def editorial(self, valor: Editorial) -> None:
-        self._editorial = valor
+        self._editorial = _validar_instancia(valor, Editorial, "editorial")
 
     @property
     def idioma(self) -> str:
@@ -234,7 +293,7 @@ class Libro(EntidadBase):
 
     @idioma.setter
     def idioma(self, valor: str) -> None:
-        self._idioma = valor
+        self._idioma = _validar_texto(valor, "idioma")
 
     @property
     def fecha_publicacion(self) -> datetime.date:
@@ -242,7 +301,7 @@ class Libro(EntidadBase):
 
     @fecha_publicacion.setter
     def fecha_publicacion(self, valor: datetime.date) -> None:
-        self._fecha_publicacion = valor
+        self.establecer_fechas(valor, self._fecha_primera_publicacion)
 
     @property
     def fecha_primera_publicacion(self) -> datetime.date:
@@ -250,7 +309,24 @@ class Libro(EntidadBase):
 
     @fecha_primera_publicacion.setter
     def fecha_primera_publicacion(self, valor: datetime.date) -> None:
-        self._fecha_primera_publicacion = valor
+        self.establecer_fechas(self._fecha_publicacion, valor)
+
+    def establecer_fechas(self, fecha_publicacion: datetime.date,
+                          fecha_primera_publicacion: datetime.date) -> None:
+        """Asigna ambas fechas juntas, validando que sean coherentes.
+
+        Permite cambiar las dos a la vez sin que falle la validación por el
+        orden en que se asignan.
+        """
+        _validar_fecha(fecha_publicacion, "fecha de publicación")
+        _validar_fecha(fecha_primera_publicacion, "fecha de primera publicación")
+        if fecha_primera_publicacion > fecha_publicacion:
+            raise ValueError(
+                "La fecha de primera publicación no puede ser posterior "
+                "a la fecha de publicación."
+            )
+        self._fecha_publicacion = fecha_publicacion
+        self._fecha_primera_publicacion = fecha_primera_publicacion
 
     @property
     def num_paginas(self) -> int:
@@ -258,7 +334,7 @@ class Libro(EntidadBase):
 
     @num_paginas.setter
     def num_paginas(self, valor: int) -> None:
-        self._num_paginas = valor
+        self._num_paginas = _validar_entero(valor, "número de páginas", 1)
 
     @property
     def peso(self) -> float:
@@ -266,7 +342,7 @@ class Libro(EntidadBase):
 
     @peso.setter
     def peso(self, valor: float) -> None:
-        self._peso = valor
+        self._peso = _validar_positivo(valor, "peso")
 
     @property
     def descripcion(self) -> Optional[str]:
@@ -274,7 +350,7 @@ class Libro(EntidadBase):
 
     @descripcion.setter
     def descripcion(self, valor: Optional[str]) -> None:
-        self._descripcion = valor
+        self._descripcion = _validar_texto_opcional(valor, "descripción")
 
     @property
     def ranking(self) -> Optional[int]:
@@ -282,7 +358,7 @@ class Libro(EntidadBase):
 
     @ranking.setter
     def ranking(self, valor: Optional[int]) -> None:
-        self._ranking = valor
+        self._ranking = None if valor is None else _validar_entero(valor, "ranking", 1)
 
     def __repr__(self) -> str:
         return f"Libro(id={self._id}, isbn={self._isbn}, titulo={self._titulo}, autor={self._autor})"
@@ -292,9 +368,9 @@ class Precio(EntidadBase):
 
     def __init__(self, id: int, libro: Libro, moneda: Moneda, valor: float) -> None:
         super().__init__(id)
-        self._libro = libro
-        self._moneda = moneda
-        self._valor = valor
+        self.libro = libro
+        self.moneda = moneda
+        self.valor = valor
 
     @property
     def libro(self) -> Libro:
@@ -302,7 +378,7 @@ class Precio(EntidadBase):
 
     @libro.setter
     def libro(self, valor: Libro) -> None:
-        self._libro = valor
+        self._libro = _validar_instancia(valor, Libro, "libro")
 
     @property
     def moneda(self) -> Moneda:
@@ -310,7 +386,7 @@ class Precio(EntidadBase):
 
     @moneda.setter
     def moneda(self, valor: Moneda) -> None:
-        self._moneda = valor
+        self._moneda = _validar_instancia(valor, Moneda, "moneda")
 
     @property
     def valor(self) -> float:
@@ -318,7 +394,7 @@ class Precio(EntidadBase):
 
     @valor.setter
     def valor(self, valor: float) -> None:
-        self._valor = valor
+        self._valor = _validar_positivo(valor, "valor")
 
     def __repr__(self) -> str:
         return f"Precio(id={self._id}, libro={self._libro.titulo}, moneda={self._moneda.codigo}, valor={self._valor})"
@@ -330,11 +406,11 @@ class Stock(EntidadBase):
                  estado: str, ubicacion: str,
                  fecha_ingreso: datetime.date) -> None:
         super().__init__(id)
-        self._libro = libro
-        self._cantidad = cantidad
-        self._estado = estado
-        self._ubicacion = ubicacion
-        self._fecha_ingreso = fecha_ingreso
+        self.libro = libro
+        self.cantidad = cantidad
+        self.estado = estado
+        self.ubicacion = ubicacion
+        self.fecha_ingreso = fecha_ingreso
 
     @property
     def libro(self) -> Libro:
@@ -342,7 +418,7 @@ class Stock(EntidadBase):
 
     @libro.setter
     def libro(self, valor: Libro) -> None:
-        self._libro = valor
+        self._libro = _validar_instancia(valor, Libro, "libro")
 
     @property
     def cantidad(self) -> int:
@@ -350,7 +426,7 @@ class Stock(EntidadBase):
 
     @cantidad.setter
     def cantidad(self, valor: int) -> None:
-        self._cantidad = valor
+        self._cantidad = _validar_entero(valor, "cantidad", 0)
 
     @property
     def estado(self) -> str:
@@ -358,7 +434,7 @@ class Stock(EntidadBase):
 
     @estado.setter
     def estado(self, valor: str) -> None:
-        self._estado = valor
+        self._estado = _validar_texto(valor, "estado")
 
     @property
     def ubicacion(self) -> str:
@@ -366,7 +442,7 @@ class Stock(EntidadBase):
 
     @ubicacion.setter
     def ubicacion(self, valor: str) -> None:
-        self._ubicacion = valor
+        self._ubicacion = _validar_texto(valor, "ubicación")
 
     @property
     def fecha_ingreso(self) -> datetime.date:
@@ -374,7 +450,7 @@ class Stock(EntidadBase):
 
     @fecha_ingreso.setter
     def fecha_ingreso(self, valor: datetime.date) -> None:
-        self._fecha_ingreso = valor
+        self._fecha_ingreso = _validar_fecha(valor, "fecha de ingreso")
 
     def __repr__(self) -> str:
         return f"Stock(id={self._id}, libro={self._libro.titulo}, cantidad={self._cantidad}, estado={self._estado})"
@@ -385,9 +461,9 @@ class CotizacionDolar(EntidadBase):
     def __init__(self, id: int, tipo_cotizacion: TipoCotizacion,
                  fecha: datetime.date, valor: float) -> None:
         super().__init__(id)
-        self._tipo_cotizacion = tipo_cotizacion
-        self._fecha = fecha
-        self._valor = valor
+        self.tipo_cotizacion = tipo_cotizacion
+        self.fecha = fecha
+        self.valor = valor
 
     @property
     def tipo_cotizacion(self) -> TipoCotizacion:
@@ -395,7 +471,7 @@ class CotizacionDolar(EntidadBase):
 
     @tipo_cotizacion.setter
     def tipo_cotizacion(self, valor: TipoCotizacion) -> None:
-        self._tipo_cotizacion = valor
+        self._tipo_cotizacion = _validar_instancia(valor, TipoCotizacion, "tipo de cotización")
 
     @property
     def fecha(self) -> datetime.date:
@@ -403,7 +479,7 @@ class CotizacionDolar(EntidadBase):
 
     @fecha.setter
     def fecha(self, valor: datetime.date) -> None:
-        self._fecha = valor
+        self._fecha = _validar_fecha(valor, "fecha")
 
     @property
     def valor(self) -> float:
@@ -411,7 +487,7 @@ class CotizacionDolar(EntidadBase):
 
     @valor.setter
     def valor(self, valor: float) -> None:
-        self._valor = valor
+        self._valor = _validar_positivo(valor, "valor")
 
     def __repr__(self) -> str:
         return f"CotizacionDolar(id={self._id}, tipo={self._tipo_cotizacion.nombre}, fecha={self._fecha}, valor={self._valor})"

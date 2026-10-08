@@ -431,8 +431,7 @@ class LibroService:
         if idioma is not None:
             self._validar_texto(idioma, "idioma")
             libro.idioma = idioma
-        libro.fecha_publicacion = nueva_fecha_publicacion
-        libro.fecha_primera_publicacion = nueva_fecha_primera
+        libro.establecer_fechas(nueva_fecha_publicacion, nueva_fecha_primera)
         if num_paginas is not None:
             self._validar_num_paginas(num_paginas)
             libro.num_paginas = num_paginas
