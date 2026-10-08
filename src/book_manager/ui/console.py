@@ -312,10 +312,13 @@ def borrar_moneda(moneda_service) -> None:
 
     moneda_id = leer_entero("ID de la moneda: ")
 
-    if moneda_service.eliminar(moneda_id):
-        print("Moneda eliminada correctamente.")
-    else:
-        print("No se encontró la moneda.")
+    try:
+        if moneda_service.eliminar(moneda_id):
+            print("Moneda eliminada correctamente.")
+        else:
+            print("No se encontró la moneda.")
+    except ValueError as exc:
+        print("Error:", exc)
 
 
 def gestionar_monedas(moneda_service) -> None:
@@ -411,10 +414,13 @@ def borrar_tipo_cotizacion(tipo_service) -> None:
 
     tipo_id = leer_entero("ID del tipo: ")
 
-    if tipo_service.eliminar(tipo_id):
-        print("Tipo de cotización eliminado correctamente.")
-    else:
-        print("No se encontró el tipo de cotización.")
+    try:
+        if tipo_service.eliminar(tipo_id):
+            print("Tipo de cotización eliminado correctamente.")
+        else:
+            print("No se encontró el tipo de cotización.")
+    except ValueError as exc:
+        print("Error:", exc)
 
 
 def gestionar_tipos_cotizacion(tipo_service) -> None:
@@ -542,10 +548,13 @@ def borrar_libro(libro_service) -> None:
 
     libro_id = leer_entero("ID del libro: ")
 
-    if libro_service.eliminar(libro_id):
-        print("Libro eliminado correctamente.")
-    else:
-        print("No se encontró el libro.")
+    try:
+        if libro_service.eliminar(libro_id):
+            print("Libro eliminado correctamente.")
+        else:
+            print("No se encontró el libro.")
+    except ValueError as exc:
+        print("Error:", exc)
 
 
 def gestionar_libros(libro_service) -> None:

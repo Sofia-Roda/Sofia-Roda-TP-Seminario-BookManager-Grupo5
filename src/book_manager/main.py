@@ -23,9 +23,17 @@ def crear_servicios(repositorios: Dict[str, object]) -> Dict[str, object]:
     editoriales = EditorialService(
         repositorios["editoriales"], repositorios["libros"]
     )
-    monedas = MonedaService(repositorios["monedas"])
-    tipos_cotizacion = TipoCotizacionService(repositorios["tipos_cotizacion"])
-    libros = LibroService(repositorios["libros"], generos, editoriales)
+    monedas = MonedaService(repositorios["monedas"], repositorios["precios"])
+    tipos_cotizacion = TipoCotizacionService(
+        repositorios["tipos_cotizacion"], repositorios["cotizaciones"]
+    )
+    libros = LibroService(
+        repositorios["libros"],
+        generos,
+        editoriales,
+        repositorios["precios"],
+        repositorios["stock"],
+    )
 
     return {
         "generos": generos,

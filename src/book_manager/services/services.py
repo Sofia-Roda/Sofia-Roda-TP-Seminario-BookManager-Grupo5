@@ -190,8 +190,10 @@ class EditorialService:
 class MonedaService:
     """Lógica de negocio para la gestión de monedas."""
 
-    def __init__(self, repositorio: RepositorioMoneda) -> None:
+    def __init__(self, repositorio: RepositorioMoneda,
+                 repositorio_precios: RepositorioPrecio) -> None:
         self._repositorio = repositorio
+        self._repositorio_precios = repositorio_precios
 
     def crear(self, nombre: str, simbolo: str, codigo: str) -> Moneda:
         """Valida los datos y crea una nueva moneda.
@@ -237,7 +239,18 @@ class MonedaService:
         return self._repositorio.actualizar(moneda)
 
     def eliminar(self, id: int) -> bool:
-        """Elimina una moneda por su id. Devuelve True si existía."""
+        """Elimina una moneda por su id. Devuelve True si existía.
+
+        Raises:
+            ValueError: Si hay precios expresados en esa moneda.
+        """
+        precios_asociados = [precio for precio in self._repositorio_precios.leer_todos()
+                             if precio.moneda.id == id]
+        if precios_asociados:
+            raise ValueError(
+                f"No se puede eliminar la moneda: tiene "
+                f"{len(precios_asociados)} precio(s) asociado(s)."
+            )
         return self._repositorio.eliminar(id)
 
     @staticmethod
@@ -255,8 +268,10 @@ class MonedaService:
 class TipoCotizacionService:
     """Lógica de negocio para la gestión de tipos de cotización."""
 
-    def __init__(self, repositorio: RepositorioTipoCotizacion) -> None:
+    def __init__(self, repositorio: RepositorioTipoCotizacion,
+                 repositorio_cotizaciones: RepositorioCotizacionDolar) -> None:
         self._repositorio = repositorio
+        self._repositorio_cotizaciones = repositorio_cotizaciones
 
     def crear(self, nombre: str,
               descripcion: Optional[str] = None) -> TipoCotizacion:
@@ -296,7 +311,17 @@ class TipoCotizacionService:
         return self._repositorio.actualizar(tipo)
 
     def eliminar(self, id: int) -> bool:
-        """Elimina un tipo de cotización por su id. Devuelve True si existía."""
+        """Elimina un tipo de cotización por su id. Devuelve True si existía.
+
+        Raises:
+            ValueError: Si hay cotizaciones registradas para ese tipo.
+        """
+        cotizaciones = self._repositorio_cotizaciones.leer_historico_por_tipo(id)
+        if cotizaciones:
+            raise ValueError(
+                f"No se puede eliminar el tipo de cotización: tiene "
+                f"{len(cotizaciones)} cotización(es) asociada(s)."
+            )
         return self._repositorio.eliminar(id)
 
     @staticmethod
@@ -312,10 +337,14 @@ class LibroService:
 
     def __init__(self, repositorio: RepositorioLibro,
                  genero_service: GeneroService,
-                 editorial_service: EditorialService) -> None:
+                 editorial_service: EditorialService,
+                 repositorio_precios: RepositorioPrecio,
+                 repositorio_stock: RepositorioStock) -> None:
         self._repositorio = repositorio
         self._genero_service = genero_service
         self._editorial_service = editorial_service
+        self._repositorio_precios = repositorio_precios
+        self._repositorio_stock = repositorio_stock
 
     def crear(self, isbn: str, titulo: str, autor: str, genero_id: int,
               editorial_id: int, idioma: str,
@@ -417,7 +446,19 @@ class LibroService:
         return self._repositorio.actualizar(libro)
 
     def eliminar(self, id: int) -> bool:
-        """Elimina un libro por su id. Devuelve True si existía."""
+        """Elimina un libro por su id. Devuelve True si existía.
+
+        Raises:
+            ValueError: Si el libro tiene precios o stock registrados.
+        """
+        if any(precio.libro.id == id for precio in self._repositorio_precios.leer_todos()):
+            raise ValueError(
+                "No se puede eliminar el libro: tiene precios asociados."
+            )
+        if self._repositorio_stock.leer_por_libro(id) is not None:
+            raise ValueError(
+                "No se puede eliminar el libro: tiene stock registrado."
+            )
         return self._repositorio.eliminar(id)
 
     def _obtener_genero_o_error(self, genero_id: int) -> Genero:
@@ -630,7 +671,6 @@ class CotizacionDolarService:
                  tipo_cotizacion_service: TipoCotizacionService) -> None:
         self._repositorio = repositorio
         self._tipo_cotizacion_service = tipo_cotizacion_service
-        self._siguiente_id = 1
 
     def crear(self, tipo_cotizacion_id: int, fecha: datetime.date,
               valor: float) -> CotizacionDolar:
@@ -697,11 +737,14 @@ class CotizacionDolarService:
 
     def _generar_id(self) -> int:
         # El repositorio de cotizaciones indexa por (tipo, fecha), no por
-        # id propio, por lo que se mantiene un contador interno para
-        # asignar un id único a cada alta.
-        id_generado = self._siguiente_id
-        self._siguiente_id += 1
-        return id_generado
+        # id propio: se recorre el histórico de cada tipo para obtener el
+        # próximo id libre, incluyendo las cotizaciones ya guardadas.
+        cotizaciones = [
+            cotizacion
+            for tipo in self._tipo_cotizacion_service.listar()
+            for cotizacion in self._repositorio.leer_historico_por_tipo(tipo.id)
+        ]
+        return _siguiente_id(cotizaciones)
 
     @staticmethod
     def _validar_valor(valor: float) -> None:
