@@ -1,14 +1,25 @@
-# Book Manager - Sprint 1
+# Book Manager - Sprint 2
 
-## Sprint actual: Sprint 1
+## Sprint actual: Sprint 2
 
 ## Objetivo
-Desarrollar una aplicación de consola (CLI) en Python para gestionar el inventario
-de una librería, cotizar libros en tiempo real según el valor del dólar y comparar
-precios con la competencia web.
+
+Incorporar persistencia mediante una base de datos relacional utilizando
+SQLAlchemy ORM, migrando los datos utilizados durante el Sprint 1 y
+adaptando el sistema Book Manager para trabajar con la nueva capa de
+persistencia.
 
 ## Introducción y contexto
-Una librería con venta al público necesita modernizar su sistema de gestión de
-inventario de libros. Debido a la fluctuación en los costos de importación de
-material bibliográfico, el sistema debe gestionar precios en diferentes monedas
-y seguir de cerca la cotización del dólar para actualizar sus valores en tiempo real.
+
+En el Sprint 1 se desarrolló el sistema Book Manager utilizando entidades,
+repositorios y archivos CSV para la carga y persistencia inicial de los datos.
+
+En este Sprint 2 el sistema evoluciona hacia el uso de una base de datos
+relacional. Se implementará la conexión mediante SQLAlchemy, se definirán
+los modelos y relaciones de las tablas, se migrarán los datos existentes
+desde los archivos CSV y se adaptarán los repositorios para trabajar con
+la base de datos.
+
+También se incorporará el consumo de una API externa para obtener
+cotizaciones del dólar y se ampliará la interfaz del sistema para trabajar
+con precios en distintas monedas.

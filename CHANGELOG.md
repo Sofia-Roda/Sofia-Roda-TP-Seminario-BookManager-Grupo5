@@ -1,3 +1,9 @@
+[Ejercicio 1]
+- Se creó la rama Sprint_2 a partir de Sprint_1.
+- Se incorporó la estructura necesaria para trabajar con base de datos.
+- Se agregaron los módulos database y models.
+- Se agregó la carpeta migrations/sql para almacenar las sentencias SQL generadas.
+- Se preparó la estructura inicial del proyecto para el Sprint 2.
 # Changelog
 [Ejercicio 7]
 - Se creó main.py como punto de entrada del sistema.
