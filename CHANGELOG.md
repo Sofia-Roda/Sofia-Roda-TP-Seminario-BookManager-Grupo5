@@ -2,6 +2,15 @@
 
 ## Sprint 2
 
+[Ejercicio 5]
+- Se creó el módulo migrations/migrations.py con la función migrar_datos(carpeta_csvs, carpeta_sqls) para migrar los datos de los CSV del TP1 a SQL.
+- Se definió el orden de migración (generos, editoriales, monedas, tipos_cotizacion, libros, precios, stock, cotizaciones_dolar) para respetar las dependencias de claves foráneas.
+- Se agregó la función auxiliar _generar_inserts, que lee cada CSV con csv.DictReader y genera las sentencias INSERT INTO.
+- Se agregó la función auxiliar _formatear_valor: los valores vacíos pasan a NULL, las columnas numéricas se insertan sin comillas y las comillas simples de los textos se escapan.
+- Se generó un archivo .sql por tabla en migrations/sql, con un comentario de encabezado.
+- Se agregó la creación automática de la carpeta de destino y un FileNotFoundError si falta algún CSV.
+- Se agregó un mensaje por consola con la cantidad de filas generadas por tabla.
+
 [Ejercicio 4]
 - Se definieron los modelos ORM del sistema con SQLAlchemy (GeneroModel, EditorialModel, MonedaModel, TipoCotizacionModel, LibroModel, PrecioModel, StockModel, CotizacionDolarModel).
 - Se crearon las tablas correspondientes a las entidades del sistema.
