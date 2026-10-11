@@ -1,10 +1,24 @@
+# Changelog
+
+## Sprint 2
+
+[Ejercicio 2]
+- Se creó la clase ConexionDB en database/connection.py para manejar la conexión con SQLAlchemy.
+- Se configuró SQLite como base por defecto (book_manager.db en la raíz del proyecto), con la URL de conexión configurable.
+- Se activó la validación de claves foráneas en SQLite.
+- Se configuró la fábrica de sesiones con expire_on_commit=False.
+- Se agregaron métodos para crear sesiones, probar la conexión y cerrarla.
+- Se agregó SQLAlchemy a requirements.txt y se ignoraron los archivos .db.
+
 [Ejercicio 1]
 - Se creó la rama Sprint_2 a partir de Sprint_1.
 - Se incorporó la estructura necesaria para trabajar con base de datos.
 - Se agregaron los módulos database y models.
 - Se agregó la carpeta migrations/sql para almacenar las sentencias SQL generadas.
 - Se preparó la estructura inicial del proyecto para el Sprint 2.
-# Changelog
+
+## Sprint 1
+
 [Ejercicio 7]
 - Se creó main.py como punto de entrada del sistema.
 - Se integró la creación y precarga de repositorios con la interfaz de consola.
@@ -15,7 +29,7 @@
 - Se agregaron menús CRUD para Género, Editorial, Moneda, TipoCotizacion, Libro, Precio, Stock y CotizacionDolar.
 - Se agregaron validaciones para números enteros, decimales y fechas ingresadas por el usuario.
 - Se conectó la interfaz de consola con los repositorios del sistema.
-- Se realizaron ajustes internos en la interfaz de consola para mejorar la organización, legibilidad y consistencia del código
+- Se realizaron ajustes internos en la interfaz de consola para mejorar la organización, legibilidad y consistencia del código.
 
 [Ejercicio 5]
 - Se crearon los archivos CSV para la importación de datos.
@@ -24,34 +38,26 @@
 - Se relacionaron los datos precargados con las entidades del sistema.
 
 [Ejercicio 4]
-- Definición de clases de servicio (lógica de negocio) para cada entidad:
-  GeneroService, EditorialService, MonedaService, TipoCotizacionService,
-  LibroService, PrecioService, StockService y CotizacionDolarService
-- Generación de ids y validaciones de datos antes de crear/actualizar
-  cada entidad (nombres, CUIT, email, código de moneda, ISBN, fechas,
-  valores numéricos y estados de stock)
-- Validación de existencia de entidades relacionadas (género, editorial,
-  libro, moneda, tipo de cotización) al crear o actualizar
+- Se definieron las clases de servicio (lógica de negocio) para cada entidad: GeneroService, EditorialService, MonedaService, TipoCotizacionService, LibroService, PrecioService, StockService y CotizacionDolarService.
+- Se agregó la generación de ids y la validación de datos antes de crear o actualizar cada entidad (nombres, CUIT, email, código de moneda, ISBN, fechas, valores numéricos y estados de stock).
+- Se agregó la validación de existencia de entidades relacionadas (género, editorial, libro, moneda, tipo de cotización) al crear o actualizar.
 
 [Ejercicio 3]
-- Definición de la interfaz genérica IRepositorio para las operaciones CRUD.
-- Implementación de RepositorioGenerico basado en listas.
-- Implementación de repositorios para Género, Editorial, Moneda, TipoCotizacion, Libro y Precio.
-- Implementación de repositorios específicos para Stock y CotizacionDolar.
+- Se definió la interfaz genérica IRepositorio para las operaciones CRUD.
+- Se implementó RepositorioGenerico basado en listas.
+- Se implementaron los repositorios para Género, Editorial, Moneda, TipoCotizacion, Libro y Precio.
+- Se implementaron repositorios específicos para Stock y CotizacionDolar.
 
 [Ejercicio 2]
-- Definición de clase base EntidadBase
-- Definición de clase Genero con encapsulamiento
-- Definición de clase Editorial con encapsulamiento
-- Definición de clase Moneda con encapsulamiento
-- Definición de clase TipoCotizacion con encapsulamiento
-- Definición de clase Libro con relaciones a Genero y Editorial
-- Definición de clase Precio con relaciones a Libro y Moneda
-- Definición de clase Stock con relaciones a Libro
-- Definición de clase CotizacionDolar con relaciones a TipoCotizacion
+- Se definió la clase base EntidadBase.
+- Se definieron las clases Genero, Editorial, Moneda y TipoCotizacion con encapsulamiento.
+- Se definió la clase Libro con relaciones a Genero y Editorial.
+- Se definió la clase Precio con relaciones a Libro y Moneda.
+- Se definió la clase Stock con relación a Libro.
+- Se definió la clase CotizacionDolar con relación a TipoCotizacion.
 
 [Ejercicio 1]
-- Inicialización del repositorio en GitHub
-- Creación de la rama Sprint_1
-- Generación de la estructura de directorios del proyecto
-- Creación de archivos base: README.md, CHANGELOG.md, requirements.txt
+- Se inicializó el repositorio en GitHub.
+- Se creó la rama Sprint_1.
+- Se generó la estructura de directorios del proyecto.
+- Se crearon los archivos base: README.md, CHANGELOG.md y requirements.txt.
