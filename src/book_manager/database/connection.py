@@ -1,5 +1,6 @@
+from contextlib import contextmanager
 from pathlib import Path
-from typing import Optional
+from typing import Iterator, Optional
 
 from sqlalchemy import create_engine, event, text
 from sqlalchemy.engine import Engine
@@ -66,6 +67,31 @@ class ConexionDB:
         if self._engine is None:
             raise RuntimeError("La conexión a la base de datos está cerrada.")
         return self._session_factory()
+
+    @contextmanager
+    def transaccion(self) -> Iterator[Session]:
+        """Context manager que maneja una transacción con la base de datos.
+
+        Confirma los cambios (commit) si el bloque termina sin errores,
+        los deshace (rollback) si ocurre una excepción y siempre cierra
+        la sesión al finalizar.
+
+        Yields:
+            Session: Sesión de SQLAlchemy para operar dentro del bloque.
+
+        Raises:
+            Exception: Relanza la excepción ocurrida dentro del bloque,
+                luego de deshacer los cambios.
+        """
+        sesion = self.crear_sesion()
+        try:
+            yield sesion
+            sesion.commit()
+        except Exception:
+            sesion.rollback()
+            raise
+        finally:
+            sesion.close()
 
     def probar_conexion(self) -> bool:
         """Verifica que la base de datos responda.
