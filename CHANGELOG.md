@@ -2,6 +2,12 @@
 
 ## Sprint 2
 
+[Ejercicio 3]
+- Se agregó el context manager transaccion a la clase ConexionDB en database/connection.py.
+- Se confirman los cambios (commit) cuando el bloque termina sin errores.
+- Se deshacen los cambios (rollback) y se relanza la excepción cuando ocurre un error.
+- Se cierra la sesión siempre al finalizar el bloque.
+
 [Ejercicio 2]
 - Se creó la clase ConexionDB en database/connection.py para manejar la conexión con SQLAlchemy.
 - Se configuró SQLite como base por defecto (book_manager.db en la raíz del proyecto), con la URL de conexión configurable.
