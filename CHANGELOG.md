@@ -2,6 +2,12 @@
 
 ## Sprint 2
 
+[Ejercicio 4]
+- Se definieron los modelos ORM del sistema con SQLAlchemy (GeneroModel, EditorialModel, MonedaModel, TipoCotizacionModel, LibroModel, PrecioModel, StockModel, CotizacionDolarModel).
+- Se crearon las tablas correspondientes a las entidades del sistema.
+- Se establecieron claves foráneas y relaciones entre los modelos con relationship() y back_populates.
+- Se agregó la restricción de unicidad tipo_cotizacion_id + fecha en cotizaciones_dolar.
+
 [Ejercicio 3]
 - Se agregó el context manager transaccion a la clase ConexionDB en database/connection.py.
 - Se confirman los cambios (commit) cuando el bloque termina sin errores.
