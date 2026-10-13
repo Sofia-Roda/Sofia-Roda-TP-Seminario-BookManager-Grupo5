@@ -3,10 +3,6 @@
 ## Sprint 2
 
 [Ejercicio 7]
-- Se corrigió la ruta del archivo .env (RUTA_ENV) para que funcione tanto en Colab como en entorno local.
-- Se agregó un error claro cuando no se encuentra API_URL.
-- Se agregaron requests y python-dotenv a requirements.txt.
-- Se agregó la equivalencia de nombres de la API (Bolsa = MEP, Contado con liquidación = CCL) para registrar todas las cotizaciones.
 - Se corrigió la actualización de fechas en LibroService usando establecer_fechas.
 - Se corrigió la ruta del archivo .env (RUTA_ENV) para que funcione tanto en Colab como en entorno local.
 - Se agregó un error claro cuando no se encuentra API_URL.
