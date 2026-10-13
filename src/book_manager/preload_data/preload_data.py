@@ -1,6 +1,10 @@
 import os
-from typing import Dict, Optional
+from typing import Dict
 
+from sqlalchemy import func, select, text
+
+from book_manager.database.connection import ConexionDB
+from book_manager.models.models import Base, GeneroModel
 from book_manager.repositories.repositories import (
     RepositorioCotizacionDolar,
     RepositorioEditorial,
@@ -13,38 +17,33 @@ from book_manager.repositories.repositories import (
 )
 
 
-# Ruta absoluta a la carpeta de los CSV, para que funcione sin importar
-# desde qué directorio se ejecute el programa.
-RUTA_CSV = os.path.join(
+RUTA_SQL = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
     "migrations",
-    "csv",
+    "sql",
 )
 
+ORDEN_TABLAS = [
+    "generos",
+    "editoriales",
+    "monedas",
+    "tipos_cotizacion",
+    "libros",
+    "precios",
+    "stock",
+    "cotizaciones_dolar",
+]
 
-def ruta_csv(nombre_archivo: str) -> str:
-    """Devuelve la ruta completa de un archivo de la carpeta de CSV."""
-    return os.path.join(RUTA_CSV, nombre_archivo)
 
+def crear_repositorios(conexion: ConexionDB) -> Dict[str, object]:
+    """Crea los repositorios necesarios para la aplicación."""
+    Base.metadata.create_all(conexion.engine)
 
-def crear_repositorios(persistir: bool = False) -> Dict[str, object]:
-    """Crea los repositorios necesarios para la aplicación.
-
-    Si persistir es True, cada repositorio lee su archivo CSV al crearse
-    y guarda en él cada cambio. Si es False, los repositorios arrancan
-    vacíos y solo trabajan en memoria.
-
-    Se crean en orden de dependencia: los libros necesitan géneros y
-    editoriales ya cargados, los precios necesitan libros y monedas, etc.
-    """
-    def ruta(nombre_archivo: str) -> Optional[str]:
-        return ruta_csv(nombre_archivo) if persistir else None
-
-    generos = RepositorioGenero(ruta("generos.csv"))
-    editoriales = RepositorioEditorial(ruta("editoriales.csv"))
-    monedas = RepositorioMoneda(ruta("monedas.csv"))
-    tipos_cotizacion = RepositorioTipoCotizacion(ruta("tipos_cotizacion.csv"))
-    libros = RepositorioLibro(generos, editoriales, ruta("libros.csv"))
+    generos = RepositorioGenero(conexion)
+    editoriales = RepositorioEditorial(conexion)
+    monedas = RepositorioMoneda(conexion)
+    tipos_cotizacion = RepositorioTipoCotizacion(conexion)
+    libros = RepositorioLibro(conexion, generos, editoriales)
 
     return {
         "generos": generos,
@@ -52,14 +51,27 @@ def crear_repositorios(persistir: bool = False) -> Dict[str, object]:
         "monedas": monedas,
         "tipos_cotizacion": tipos_cotizacion,
         "libros": libros,
-        "precios": RepositorioPrecio(libros, monedas, ruta("precios.csv")),
-        "stock": RepositorioStock(libros, ruta("stock.csv")),
-        "cotizaciones": RepositorioCotizacionDolar(
-            tipos_cotizacion, ruta("cotizaciones_dolar.csv")
-        ),
+        "precios": RepositorioPrecio(conexion, libros, monedas),
+        "stock": RepositorioStock(conexion, libros),
+        "cotizaciones": RepositorioCotizacionDolar(conexion, tipos_cotizacion),
     }
 
 
-def cargar_datos_iniciales() -> Dict[str, object]:
-    """Crea los repositorios cargando los datos guardados en los CSV."""
-    return crear_repositorios(persistir=True)
+def cargar_datos_iniciales(conexion: ConexionDB) -> Dict[str, object]:
+    """Crea los repositorios y carga los datos de la migración."""
+    repositorios = crear_repositorios(conexion)
+
+    with conexion.transaccion() as sesion:
+        cantidad = sesion.execute(
+            select(func.count()).select_from(GeneroModel)
+        ).scalar()
+        if cantidad == 0:
+            for tabla in ORDEN_TABLAS:
+                ruta = os.path.join(RUTA_SQL, f"{tabla}.sql")
+                with open(ruta, "r", encoding="utf-8") as archivo:
+                    for sentencia in archivo:
+                        sentencia = sentencia.strip()
+                        if sentencia and not sentencia.startswith("--"):
+                            sesion.execute(text(sentencia))
+
+    return repositorios

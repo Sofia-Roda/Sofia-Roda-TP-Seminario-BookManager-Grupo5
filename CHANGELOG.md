@@ -10,6 +10,9 @@
 - Se evita duplicar cotizaciones ya registradas para la misma fecha y tipo.
 
 [Ejercicio 6]
+- Se adaptó preload_data.py para crear las tablas, cargar los datos de migrations/sql cuando la base está vacía y crear los repositorios con ConexionDB.
+- Se adaptó main.py para crear la conexión a la base de datos, usarla en todo el sistema y cerrarla al finalizar.
+- Se agregó una verificación del sistema completo con los datos precargados.
 - Se reescribieron los repositorios para usar SQLAlchemy y base de datos en lugar de CSV.
 - Se implementó RepositorioGenero con CRUD completo usando base de datos.
 - Se implementó RepositorioEditorial con CRUD completo usando base de datos.

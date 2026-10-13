@@ -1,5 +1,6 @@
 from typing import Dict
 
+from book_manager.database.connection import ConexionDB
 from book_manager.preload_data.preload_data import (
     cargar_datos_iniciales,
     crear_repositorios,
@@ -51,12 +52,16 @@ def crear_servicios(repositorios: Dict[str, object]) -> Dict[str, object]:
 
 def main(import_default_data: bool = True) -> None:
     """Ejecuta el sistema Book Manager."""
-    if import_default_data:
-        repositorios = cargar_datos_iniciales()
-    else:
-        repositorios = crear_repositorios()
+    conexion = ConexionDB()
+    try:
+        if import_default_data:
+            repositorios = cargar_datos_iniciales(conexion)
+        else:
+            repositorios = crear_repositorios(conexion)
 
-    iniciar_menu(crear_servicios(repositorios))
+        iniciar_menu(crear_servicios(repositorios))
+    finally:
+        conexion.cerrar()
 
 
 if __name__ == "__main__":
