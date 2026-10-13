@@ -1,6 +1,7 @@
 
 import datetime
 import os
+from pathlib import Path
 from typing import List, Optional
 
 import requests
@@ -27,6 +28,9 @@ from book_manager.repositories.repositories import (
     RepositorioStock,
     RepositorioTipoCotizacion,
 )
+
+
+RUTA_ENV = Path(__file__).resolve().parents[3] / ".env"
 
 
 def _siguiente_id(entidades: List[EntidadBase]) -> int:
@@ -664,6 +668,11 @@ class StockService:
 class CotizacionDolarService:
     """Lógica de negocio para la gestión de cotizaciones del dólar."""
 
+    NOMBRES_API = {
+        "bolsa": "mep",
+        "contado con liquidación": "ccl",
+    }
+
     def __init__(self, repositorio: RepositorioCotizacionDolar,
                  tipo_cotizacion_service: TipoCotizacionService) -> None:
         self._repositorio = repositorio
@@ -733,8 +742,12 @@ class CotizacionDolarService:
         Raises:
             RuntimeError: Si la API no responde o devuelve un error.
         """
-        load_dotenv("/content/book_manager/.env")
+        load_dotenv(RUTA_ENV)
         url = os.getenv("API_URL")
+        if not url:
+            raise RuntimeError(
+                f"No se encontró API_URL en el archivo {RUTA_ENV}."
+            )
 
         respuesta = requests.get(url, timeout=10)
 
@@ -754,17 +767,17 @@ class CotizacionDolarService:
             if not nombre_tipo or valor_venta is None:
                 continue
 
-            # Buscar el tipo de cotización por nombre
+            nombre_api = nombre_tipo.lower()
+            nombre_buscado = self.NOMBRES_API.get(nombre_api, nombre_api)
             tipo = None
             for t in self._tipo_cotizacion_service.listar():
-                if t.nombre.lower() == nombre_tipo.lower():
+                if t.nombre.lower() == nombre_buscado:
                     tipo = t
                     break
 
             if tipo is None:
                 continue
 
-            # Si ya existe la cotización para hoy no la duplica
             existente = self._repositorio.leer_por_tipo_y_fecha(tipo.id, hoy)
             if existente is not None:
                 cotizaciones_registradas.append(existente)

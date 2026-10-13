@@ -1,2 +1,4 @@
 # Requiere Python 3.10 o superior (se utiliza la sentencia match/case).
 SQLAlchemy>=2.0
+requests
+python-dotenv
