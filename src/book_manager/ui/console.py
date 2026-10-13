@@ -1,3 +1,4 @@
+import csv
 import datetime
 
 
@@ -658,7 +659,129 @@ def borrar_precio(precio_service) -> None:
         print("No se encontró el precio.")
 
 
-def gestionar_precios(precio_service) -> None:
+def mostrar_precios_bimonetarios(
+    precio_service,
+    cotizacion_service,
+    tipo_service,
+) -> None:
+    print("\n--- LISTA DE PRECIOS BIMONETARIA ---")
+
+    tipos = tipo_service.listar()
+
+    if len(tipos) == 0:
+        print("No hay tipos de cotización cargados.")
+        return
+
+    print("\nTipos de cotización disponibles:")
+
+    for tipo in tipos:
+        print(
+            tipo.id,
+            "-",
+            tipo.nombre,
+        )
+
+    tipo_id = leer_entero(
+        "\nSeleccione el ID del tipo de cotización: "
+    )
+
+    tipo = tipo_service.obtener_por_id(tipo_id)
+
+    if tipo is None:
+        print("No existe un tipo de cotización con ese ID.")
+        return
+
+    cotizaciones = cotizacion_service.listar_historico(tipo_id)
+
+    if len(cotizaciones) == 0:
+        print("No hay cotizaciones disponibles para ese tipo.")
+        return
+
+    cotizacion_actual = max(
+        cotizaciones,
+        key=lambda cotizacion: cotizacion.fecha,
+    )
+
+    precios = precio_service.listar()
+
+    if len(precios) == 0:
+        print("No hay precios cargados.")
+        return
+
+    print(
+        "\nCotización utilizada:",
+        tipo.nombre,
+        "-",
+        cotizacion_actual.fecha,
+        "- $",
+        cotizacion_actual.valor,
+    )
+
+    print("\n--- PRECIOS EN ARS Y USD ---")
+
+    for precio in precios:
+
+        if precio.moneda.codigo == "ARS":
+            valor_usd = precio.valor / cotizacion_actual.valor
+
+            print(
+                precio.libro.titulo,
+                "- ARS:",
+                round(precio.valor, 2),
+                "- USD:",
+                round(valor_usd, 2),
+            )
+
+def exportar_precios_csv(precio_service) -> None:
+    print("\n--- EXPORTAR PRECIOS A CSV ---")
+
+    precios = precio_service.listar()
+
+    if len(precios) == 0:
+        print("No hay precios para exportar.")
+        return
+
+    nombre_archivo = "precios_exportados.csv"
+
+    with open(
+        nombre_archivo,
+        "w",
+        newline="",
+        encoding="utf-8",
+    ) as archivo:
+        escritor = csv.writer(archivo)
+
+        escritor.writerow(
+            [
+                "libro_id",
+                "titulo",
+                "isbn",
+                "moneda",
+                "codigo_moneda",
+                "simbolo",
+                "precio",
+            ]
+        )
+
+        for precio in precios:
+            escritor.writerow(
+                [
+                    precio.libro.id,
+                    precio.libro.titulo,
+                    precio.libro.isbn,
+                    precio.moneda.nombre,
+                    precio.moneda.codigo,
+                    precio.moneda.simbolo,
+                    precio.valor,
+                ]
+            )
+
+    print(
+        "Archivo generado correctamente:",
+        nombre_archivo,
+    )
+
+def gestionar_precios(precio_service,cotizacion_service,tipo_service,) -> None:
     while True:
 
         print("\n=== PRECIOS ===")
@@ -666,6 +789,8 @@ def gestionar_precios(precio_service) -> None:
         print("2. Crear")
         print("3. Modificar")
         print("4. Eliminar")
+        print("5. Ver lista de precios bimonetaria")
+        print("6. Exportar precios a CSV")
         print("0. Volver")
 
         seleccion = input("Opción: ")
@@ -683,6 +808,12 @@ def gestionar_precios(precio_service) -> None:
 
             case "4":
                 borrar_precio(precio_service)
+
+            case "5":
+                mostrar_precios_bimonetarios(precio_service,cotizacion_service,tipo_service,)
+
+            case "6":
+                exportar_precios_csv(precio_service)
 
             case "0":
                 break
@@ -890,6 +1021,29 @@ def borrar_cotizacion(cotizacion_service) -> None:
     else:
         print("No se encontró la cotización.")
 
+def obtener_cotizaciones_api(cotizacion_service) -> None:
+    print("\n--- OBTENER COTIZACIONES POR API ---")
+
+    try:
+        cotizaciones = cotizacion_service.obtener_cotizaciones()
+
+        if len(cotizaciones) == 0:
+            print("No se obtuvieron cotizaciones.")
+            return
+
+        print("Cotizaciones obtenidas correctamente:")
+
+        for cotizacion in cotizaciones:
+            print(
+                cotizacion.tipo_cotizacion.nombre,
+                "- Fecha:",
+                cotizacion.fecha,
+                "- Valor:",
+                cotizacion.valor,
+            )
+
+    except RuntimeError as exc:
+        print("Error:", exc)
 
 def gestionar_cotizaciones(cotizacion_service, tipo_service) -> None:
     while True:
@@ -899,6 +1053,7 @@ def gestionar_cotizaciones(cotizacion_service, tipo_service) -> None:
         print("2. Crear")
         print("3. Modificar")
         print("4. Eliminar")
+        print("5. Obtener cotizaciones por API")
         print("0. Volver")
 
         seleccion = input("Opción: ")
@@ -916,6 +1071,9 @@ def gestionar_cotizaciones(cotizacion_service, tipo_service) -> None:
 
             case "4":
                 borrar_cotizacion(cotizacion_service)
+
+            case "5":
+                obtener_cotizaciones_api(cotizacion_service)
 
             case "0":
                 break
@@ -964,7 +1122,7 @@ def iniciar_menu(servicios: dict) -> None:
                 gestionar_libros(servicios["libros"])
 
             case "6":
-                gestionar_precios(servicios["precios"])
+                gestionar_precios(servicios["precios"],servicios["cotizaciones"],servicios["tipos_cotizacion"],)
 
             case "7":
                 gestionar_stock(servicios["stock"], servicios["libros"])

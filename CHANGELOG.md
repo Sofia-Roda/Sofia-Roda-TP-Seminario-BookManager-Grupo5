@@ -2,6 +2,12 @@
 
 ## Sprint 2
 
+[Ejercicio 8]
+- Se agregó la opción de menú para obtener las cotizaciones del dólar mediante la API.
+- Se agregó la visualización bimonetaria de precios en ARS y USD utilizando el tipo de cotización seleccionado.
+- Se agregó la exportación de los precios registrados a un archivo CSV, incluyendo la moneda asociada a cada precio.
+- Se integraron las nuevas opciones dentro de los menús de Precios y Cotizaciones del dólar.
+
 [Ejercicio 7]
 - Se corrigió la actualización de fechas en LibroService usando establecer_fechas.
 - Se corrigió la ruta del archivo .env (RUTA_ENV) para que funcione tanto en Colab como en entorno local.
