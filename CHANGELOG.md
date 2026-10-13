@@ -2,6 +2,24 @@
 
 ## Sprint 2
 
+[Ejercicio 7]
+- Se creó el archivo .env con la URL de la API del dólar.
+- Se agregaron los imports de requests, dotenv y os al servicio.
+- Se implementó el método obtener_cotizaciones() en CotizacionDolarService.
+- El método consulta la API dolarapi.com, busca el tipo de cotización correspondiente y guarda cada cotización en la base de datos.
+- Se evita duplicar cotizaciones ya registradas para la misma fecha y tipo.
+
+[Ejercicio 6]
+- Se reescribieron los repositorios para usar SQLAlchemy y base de datos en lugar de CSV.
+- Se implementó RepositorioGenero con CRUD completo usando base de datos.
+- Se implementó RepositorioEditorial con CRUD completo usando base de datos.
+- Se implementó RepositorioMoneda con CRUD completo usando base de datos.
+- Se implementó RepositorioTipoCotizacion con CRUD completo usando base de datos.
+- Se implementó RepositorioLibro con CRUD completo usando base de datos.
+- Se implementó RepositorioPrecio con CRUD completo usando base de datos.
+- Se implementó RepositorioStock con CRUD completo usando base de datos.
+- Se implementó RepositorioCotizacionDolar con CRUD completo usando base de datos.
+
 [Ejercicio 5]
 - Se creó el módulo migrations/migrations.py con la función migrar_datos(carpeta_csvs, carpeta_sqls) para migrar los datos de los CSV del TP1 a SQL.
 - Se definió el orden de migración (generos, editoriales, monedas, tipos_cotizacion, libros, precios, stock, cotizaciones_dolar) para respetar las dependencias de claves foráneas.

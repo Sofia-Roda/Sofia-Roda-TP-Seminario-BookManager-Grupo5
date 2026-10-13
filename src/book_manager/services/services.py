@@ -1,6 +1,10 @@
 
 import datetime
+import os
 from typing import List, Optional
+
+import requests
+from dotenv import load_dotenv
 
 from book_manager.entities.entities import (
     CotizacionDolar,
@@ -406,10 +410,6 @@ class LibroService:
         if libro is None:
             raise ValueError(f"No existe un libro con id {id}.")
 
-        # Se valida la coherencia entre ambas fechas antes de mutar el
-        # libro: como el repositorio guarda la misma referencia en
-        # memoria, escribir un campo antes de validar el par dejaría el
-        # objeto en un estado inconsistente si la validación falla.
         nueva_fecha_publicacion = fecha_publicacion or libro.fecha_publicacion
         nueva_fecha_primera = (fecha_primera_publicacion
                                 or libro.fecha_primera_publicacion)
@@ -431,7 +431,8 @@ class LibroService:
         if idioma is not None:
             self._validar_texto(idioma, "idioma")
             libro.idioma = idioma
-        libro.establecer_fechas(nueva_fecha_publicacion, nueva_fecha_primera)
+        libro.fecha_publicacion = nueva_fecha_publicacion
+        libro.fecha_primera_publicacion = nueva_fecha_primera
         if num_paginas is not None:
             self._validar_num_paginas(num_paginas)
             libro.num_paginas = num_paginas
@@ -600,9 +601,6 @@ class StockService:
         libro = self._obtener_libro_o_error(libro_id)
         self._validar_cantidad(cantidad)
         self._validar_estado(estado)
-        # El stock es 1 a 1 con el libro y el repositorio indexa por
-        # libro_id (no por id propio): se reutiliza el id del libro para
-        # no necesitar un segundo generador de ids independiente.
         stock = Stock(id=libro.id, libro=libro, cantidad=cantidad,
                        estado=estado, ubicacion=ubicacion,
                        fecha_ingreso=fecha_ingreso)
@@ -723,6 +721,66 @@ class CotizacionDolarService:
         """
         return self._repositorio.eliminar(tipo_cotizacion_id, fecha)
 
+    def obtener_cotizaciones(self) -> List[CotizacionDolar]:
+        """Consulta la API del dólar, guarda las cotizaciones en la base
+        de datos y devuelve la lista de cotizaciones registradas.
+
+        Lee la URL de la API desde el archivo .env.
+
+        Returns:
+            List[CotizacionDolar]: Las cotizaciones registradas hoy.
+
+        Raises:
+            RuntimeError: Si la API no responde o devuelve un error.
+        """
+        load_dotenv("/content/book_manager/.env")
+        url = os.getenv("API_URL")
+
+        respuesta = requests.get(url, timeout=10)
+
+        if respuesta.status_code != 200:
+            raise RuntimeError(
+                f"Error al consultar la API: {respuesta.status_code}"
+            )
+
+        datos = respuesta.json()
+        hoy = datetime.date.today()
+        cotizaciones_registradas: List[CotizacionDolar] = []
+
+        for dato in datos:
+            nombre_tipo = dato.get("nombre", "")
+            valor_venta = dato.get("venta")
+
+            if not nombre_tipo or valor_venta is None:
+                continue
+
+            # Buscar el tipo de cotización por nombre
+            tipo = None
+            for t in self._tipo_cotizacion_service.listar():
+                if t.nombre.lower() == nombre_tipo.lower():
+                    tipo = t
+                    break
+
+            if tipo is None:
+                continue
+
+            # Si ya existe la cotización para hoy no la duplica
+            existente = self._repositorio.leer_por_tipo_y_fecha(tipo.id, hoy)
+            if existente is not None:
+                cotizaciones_registradas.append(existente)
+                continue
+
+            cotizacion = CotizacionDolar(
+                id=self._generar_id(),
+                tipo_cotizacion=tipo,
+                fecha=hoy,
+                valor=float(valor_venta),
+            )
+            self._repositorio.crear(cotizacion)
+            cotizaciones_registradas.append(cotizacion)
+
+        return cotizaciones_registradas
+
     def _obtener_tipo_o_error(self,
                               tipo_cotizacion_id: int) -> TipoCotizacion:
         tipo = self._tipo_cotizacion_service.obtener_por_id(
@@ -735,9 +793,6 @@ class CotizacionDolarService:
         return tipo
 
     def _generar_id(self) -> int:
-        # El repositorio de cotizaciones indexa por (tipo, fecha), no por
-        # id propio: se recorre el histórico de cada tipo para obtener el
-        # próximo id libre, incluyendo las cotizaciones ya guardadas.
         cotizaciones = [
             cotizacion
             for tipo in self._tipo_cotizacion_service.listar()
