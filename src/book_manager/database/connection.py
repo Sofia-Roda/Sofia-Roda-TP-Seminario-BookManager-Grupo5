@@ -1,12 +1,15 @@
+import os
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Iterator, Optional
 
+from dotenv import load_dotenv
 from sqlalchemy import create_engine, event, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session, sessionmaker
 
+load_dotenv()
 
 # Ruta absoluta al archivo de la base en la raíz del proyecto, para que
 # funcione sin importar desde qué directorio se ejecute el programa.
@@ -21,12 +24,16 @@ class ConexionDB:
 
         Args:
             url (Optional[str]): URL de conexión de SQLAlchemy. Si es None,
-                se utiliza un archivo SQLite en la raíz del proyecto.
+                se busca la variable DATABASE_URL en el archivo .env; si
+                tampoco existe, se utiliza un archivo SQLite en la raíz
+                del proyecto.
             echo (bool): Si es True, muestra por consola las sentencias SQL.
 
         Raises:
             ValueError: Si la URL está vacía.
         """
+        if url is None:
+            url = os.getenv("DATABASE_URL")
         if url is None:
             url = f"sqlite:///{RUTA_DB}"
         if not isinstance(url, str) or not url.strip():
