@@ -49,7 +49,7 @@ class MonedaModel(Base):
     id = Column(Integer, primary_key=True)
     nombre = Column(String(100), nullable=False)
     simbolo = Column(String(10), nullable=False)
-    codigo = Column(String(10), nullable=False)
+    codigo = Column(String(10),nullable=False,unique=True,)
 
     precios = relationship("PrecioModel", back_populates="moneda")
 
@@ -72,7 +72,7 @@ class LibroModel(Base):
     __tablename__ = "libros"
 
     id = Column(Integer, primary_key=True)
-    isbn = Column(String(30), nullable=False)
+    isbn = Column(String(30),nullable=False,unique=True,)
     titulo = Column(String(200), nullable=False)
     autor = Column(String(150), nullable=False)
 
