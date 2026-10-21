@@ -1,56 +1,59 @@
 import os
 from contextlib import contextmanager
-from pathlib import Path
 from typing import Iterator, Optional
 
 from dotenv import load_dotenv
-from sqlalchemy import create_engine, event, text
+from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session, sessionmaker
 
 load_dotenv()
 
-# Ruta absoluta al archivo de la base en la raíz del proyecto, para que
-# funcione sin importar desde qué directorio se ejecute el programa.
-RUTA_DB = Path(__file__).resolve().parents[3] / "book_manager.db"
-
 
 class ConexionDB:
     """Administra la conexión con la base de datos mediante SQLAlchemy."""
 
-    def __init__(self, url: Optional[str] = None, echo: bool = False) -> None:
+    def __init__(
+        self,
+        url: Optional[str] = None,
+        echo: bool = False,
+    ) -> None:
         """Crea el engine y la fábrica de sesiones.
 
         Args:
             url (Optional[str]): URL de conexión de SQLAlchemy. Si es None,
-                se busca la variable DATABASE_URL en el archivo .env; si
-                tampoco existe, se utiliza un archivo SQLite en la raíz
-                del proyecto.
+                se busca la variable DATABASE_URL en el archivo .env.
             echo (bool): Si es True, muestra por consola las sentencias SQL.
 
         Raises:
-            ValueError: Si la URL está vacía.
+            ValueError: Si DATABASE_URL no está configurada.
+            ConnectionError: Si no se puede establecer la conexión.
         """
         if url is None:
             url = os.getenv("DATABASE_URL")
-        if url is None:
-            url = f"sqlite:///{RUTA_DB}"
+
         if not isinstance(url, str) or not url.strip():
-            raise ValueError("La URL de conexión no puede estar vacía.")
+            raise ValueError(
+                "No se encontró DATABASE_URL para conectar con la base de datos."
+            )
 
         self._url = url
-        self._engine: Optional[Engine] = create_engine(url, echo=echo)
-        if self._engine.dialect.name == "sqlite":
-            # SQLite no valida las claves foráneas si no se activa.
-            event.listen(self._engine, "connect", _activar_claves_foraneas)
+        self._engine: Optional[Engine] = create_engine(
+            url,
+            echo=echo,
+        )
 
-        # Con expire_on_commit=False los objetos siguen siendo legibles
-        # después del commit, aunque la sesión ya se haya cerrado.
         self._session_factory = sessionmaker(
             bind=self._engine,
             expire_on_commit=False,
         )
+
+        if not self.probar_conexion():
+            self.cerrar()
+            raise ConnectionError(
+                "No se pudo establecer la conexión con la base de datos."
+            )
 
     @property
     def url(self) -> str:
@@ -119,9 +122,3 @@ class ConexionDB:
             self._engine.dispose()
             self._engine = None
 
-
-def _activar_claves_foraneas(conexion_dbapi, _registro) -> None:
-    """Activa la validación de claves foráneas en cada conexión SQLite."""
-    cursor = conexion_dbapi.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON")
-    cursor.close()
