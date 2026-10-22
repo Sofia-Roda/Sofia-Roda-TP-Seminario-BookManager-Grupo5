@@ -1,3 +1,4 @@
+"""Contiene la lógica de negocio y las validaciones del sistema Book Manager."""
 import datetime
 import os
 from pathlib import Path
@@ -201,17 +202,20 @@ class EditorialService:
 
     @staticmethod
     def _validar_nombre(nombre: str) -> None:
+        """Valida que el nombre de la editorial no esté vacío."""
         if not nombre or not nombre.strip():
             raise ValueError("El nombre de la editorial no puede estar vacío.")
 
     @staticmethod
     def _validar_cuit(cuit: str) -> None:
+        """Valida que el CUIT contenga once dígitos."""
         solo_digitos = cuit.replace("-", "")
         if not solo_digitos.isdigit() or len(solo_digitos) != 11:
             raise ValueError(f"CUIT inválido: {cuit}.")
 
     @staticmethod
     def _validar_email(email: str) -> None:
+        """Valida el formato básico de una dirección de correo electrónico."""
         if "@" not in email or "." not in email.split("@")[-1]:
             raise ValueError(f"Email inválido: {email}.")
 
@@ -295,11 +299,13 @@ class MonedaService:
 
     @staticmethod
     def _validar_nombre(nombre: str) -> None:
+        """Valida que el nombre de la moneda no esté vacío."""
         if not nombre or not nombre.strip():
             raise ValueError("El nombre de la moneda no puede estar vacío.")
 
     @staticmethod
     def _validar_codigo(codigo: str) -> str:
+        """Valida y normaliza el código de tres letras de la moneda."""
         if not codigo.isalpha() or len(codigo) != 3:
             raise ValueError(f"Código de moneda inválido: {codigo}.")
         return codigo.upper()
@@ -372,6 +378,7 @@ class TipoCotizacionService:
 
     @staticmethod
     def _validar_nombre(nombre: str) -> None:
+        """Valida que el nombre del género no esté vacío."""
         if not nombre or not nombre.strip():
             raise ValueError("El nombre del tipo de cotización no puede estar vacío.")
 
