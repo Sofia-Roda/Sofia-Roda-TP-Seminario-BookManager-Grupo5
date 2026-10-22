@@ -1,4 +1,3 @@
-
 import datetime
 import os
 from pathlib import Path
@@ -29,7 +28,6 @@ from book_manager.repositories.repositories import (
     RepositorioTipoCotizacion,
 )
 
-
 RUTA_ENV = Path(__file__).resolve().parents[3] / ".env"
 
 
@@ -41,8 +39,9 @@ def _siguiente_id(entidades: List[EntidadBase]) -> int:
 class GeneroService:
     """Lógica de negocio para la gestión de géneros literarios."""
 
-    def __init__(self, repositorio: RepositorioGenero,
-                 repositorio_libros: RepositorioLibro) -> None:
+    def __init__(
+        self, repositorio: RepositorioGenero, repositorio_libros: RepositorioLibro
+    ) -> None:
         self._repositorio = repositorio
         self._repositorio_libros = repositorio_libros
 
@@ -53,8 +52,11 @@ class GeneroService:
             ValueError: Si el nombre está vacío.
         """
         self._validar_nombre(nombre)
-        genero = Genero(id=_siguiente_id(self._repositorio.leer_todos()),
-                         nombre=nombre, descripcion=descripcion)
+        genero = Genero(
+            id=_siguiente_id(self._repositorio.leer_todos()),
+            nombre=nombre,
+            descripcion=descripcion,
+        )
         return self._repositorio.crear(genero)
 
     def obtener_por_id(self, id: int) -> Optional[Genero]:
@@ -65,8 +67,9 @@ class GeneroService:
         """Devuelve todos los géneros registrados."""
         return self._repositorio.leer_todos()
 
-    def actualizar(self, id: int, nombre: Optional[str] = None,
-                   descripcion: Optional[str] = None) -> Genero:
+    def actualizar(
+        self, id: int, nombre: Optional[str] = None, descripcion: Optional[str] = None
+    ) -> Genero:
         """Actualiza los datos de un género existente.
 
         Raises:
@@ -89,8 +92,11 @@ class GeneroService:
         Raises:
             ValueError: Si hay libros asociados al género.
         """
-        libros_asociados = [libro for libro in self._repositorio_libros.leer_todos()
-                            if libro.genero.id == id]
+        libros_asociados = [
+            libro
+            for libro in self._repositorio_libros.leer_todos()
+            if libro.genero.id == id
+        ]
         if libros_asociados:
             raise ValueError(
                 f"No se puede eliminar el género: tiene "
@@ -107,13 +113,15 @@ class GeneroService:
 class EditorialService:
     """Lógica de negocio para la gestión de editoriales."""
 
-    def __init__(self, repositorio: RepositorioEditorial,
-                 repositorio_libros: RepositorioLibro) -> None:
+    def __init__(
+        self, repositorio: RepositorioEditorial, repositorio_libros: RepositorioLibro
+    ) -> None:
         self._repositorio = repositorio
         self._repositorio_libros = repositorio_libros
 
-    def crear(self, nombre: str, cuit: str, email: str, telefono: str,
-              pais: str) -> Editorial:
+    def crear(
+        self, nombre: str, cuit: str, email: str, telefono: str, pais: str
+    ) -> Editorial:
         """Valida los datos y crea una nueva editorial.
 
         Raises:
@@ -122,9 +130,14 @@ class EditorialService:
         self._validar_nombre(nombre)
         self._validar_cuit(cuit)
         self._validar_email(email)
-        editorial = Editorial(id=_siguiente_id(self._repositorio.leer_todos()),
-                               nombre=nombre, cuit=cuit, email=email,
-                               telefono=telefono, pais=pais)
+        editorial = Editorial(
+            id=_siguiente_id(self._repositorio.leer_todos()),
+            nombre=nombre,
+            cuit=cuit,
+            email=email,
+            telefono=telefono,
+            pais=pais,
+        )
         return self._repositorio.crear(editorial)
 
     def obtener_por_id(self, id: int) -> Optional[Editorial]:
@@ -135,10 +148,15 @@ class EditorialService:
         """Devuelve todas las editoriales registradas."""
         return self._repositorio.leer_todos()
 
-    def actualizar(self, id: int, nombre: Optional[str] = None,
-                   cuit: Optional[str] = None, email: Optional[str] = None,
-                   telefono: Optional[str] = None,
-                   pais: Optional[str] = None) -> Editorial:
+    def actualizar(
+        self,
+        id: int,
+        nombre: Optional[str] = None,
+        cuit: Optional[str] = None,
+        email: Optional[str] = None,
+        telefono: Optional[str] = None,
+        pais: Optional[str] = None,
+    ) -> Editorial:
         """Actualiza los datos de una editorial existente.
 
         Raises:
@@ -169,8 +187,11 @@ class EditorialService:
         Raises:
             ValueError: Si hay libros asociados a la editorial.
         """
-        libros_asociados = [libro for libro in self._repositorio_libros.leer_todos()
-                            if libro.editorial.id == id]
+        libros_asociados = [
+            libro
+            for libro in self._repositorio_libros.leer_todos()
+            if libro.editorial.id == id
+        ]
         if libros_asociados:
             raise ValueError(
                 f"No se puede eliminar la editorial: tiene "
@@ -198,8 +219,9 @@ class EditorialService:
 class MonedaService:
     """Lógica de negocio para la gestión de monedas."""
 
-    def __init__(self, repositorio: RepositorioMoneda,
-                 repositorio_precios: RepositorioPrecio) -> None:
+    def __init__(
+        self, repositorio: RepositorioMoneda, repositorio_precios: RepositorioPrecio
+    ) -> None:
         self._repositorio = repositorio
         self._repositorio_precios = repositorio_precios
 
@@ -212,9 +234,12 @@ class MonedaService:
         """
         self._validar_nombre(nombre)
         codigo_normalizado = self._validar_codigo(codigo)
-        moneda = Moneda(id=_siguiente_id(self._repositorio.leer_todos()),
-                         nombre=nombre, simbolo=simbolo,
-                         codigo=codigo_normalizado)
+        moneda = Moneda(
+            id=_siguiente_id(self._repositorio.leer_todos()),
+            nombre=nombre,
+            simbolo=simbolo,
+            codigo=codigo_normalizado,
+        )
         return self._repositorio.crear(moneda)
 
     def obtener_por_id(self, id: int) -> Optional[Moneda]:
@@ -225,9 +250,13 @@ class MonedaService:
         """Devuelve todas las monedas registradas."""
         return self._repositorio.leer_todos()
 
-    def actualizar(self, id: int, nombre: Optional[str] = None,
-                   simbolo: Optional[str] = None,
-                   codigo: Optional[str] = None) -> Moneda:
+    def actualizar(
+        self,
+        id: int,
+        nombre: Optional[str] = None,
+        simbolo: Optional[str] = None,
+        codigo: Optional[str] = None,
+    ) -> Moneda:
         """Actualiza los datos de una moneda existente.
 
         Raises:
@@ -252,8 +281,11 @@ class MonedaService:
         Raises:
             ValueError: Si hay precios expresados en esa moneda.
         """
-        precios_asociados = [precio for precio in self._repositorio_precios.leer_todos()
-                             if precio.moneda.id == id]
+        precios_asociados = [
+            precio
+            for precio in self._repositorio_precios.leer_todos()
+            if precio.moneda.id == id
+        ]
         if precios_asociados:
             raise ValueError(
                 f"No se puede eliminar la moneda: tiene "
@@ -276,21 +308,26 @@ class MonedaService:
 class TipoCotizacionService:
     """Lógica de negocio para la gestión de tipos de cotización."""
 
-    def __init__(self, repositorio: RepositorioTipoCotizacion,
-                 repositorio_cotizaciones: RepositorioCotizacionDolar) -> None:
+    def __init__(
+        self,
+        repositorio: RepositorioTipoCotizacion,
+        repositorio_cotizaciones: RepositorioCotizacionDolar,
+    ) -> None:
         self._repositorio = repositorio
         self._repositorio_cotizaciones = repositorio_cotizaciones
 
-    def crear(self, nombre: str,
-              descripcion: Optional[str] = None) -> TipoCotizacion:
+    def crear(self, nombre: str, descripcion: Optional[str] = None) -> TipoCotizacion:
         """Valida los datos y crea un nuevo tipo de cotización.
 
         Raises:
             ValueError: Si el nombre está vacío.
         """
         self._validar_nombre(nombre)
-        tipo = TipoCotizacion(id=_siguiente_id(self._repositorio.leer_todos()),
-                               nombre=nombre, descripcion=descripcion)
+        tipo = TipoCotizacion(
+            id=_siguiente_id(self._repositorio.leer_todos()),
+            nombre=nombre,
+            descripcion=descripcion,
+        )
         return self._repositorio.crear(tipo)
 
     def obtener_por_id(self, id: int) -> Optional[TipoCotizacion]:
@@ -301,8 +338,9 @@ class TipoCotizacionService:
         """Devuelve todos los tipos de cotización registrados."""
         return self._repositorio.leer_todos()
 
-    def actualizar(self, id: int, nombre: Optional[str] = None,
-                   descripcion: Optional[str] = None) -> TipoCotizacion:
+    def actualizar(
+        self, id: int, nombre: Optional[str] = None, descripcion: Optional[str] = None
+    ) -> TipoCotizacion:
         """Actualiza los datos de un tipo de cotización existente.
 
         Raises:
@@ -335,32 +373,41 @@ class TipoCotizacionService:
     @staticmethod
     def _validar_nombre(nombre: str) -> None:
         if not nombre or not nombre.strip():
-            raise ValueError(
-                "El nombre del tipo de cotización no puede estar vacío."
-            )
+            raise ValueError("El nombre del tipo de cotización no puede estar vacío.")
 
 
 class LibroService:
     """Lógica de negocio para la gestión del catálogo de libros."""
 
-    def __init__(self, repositorio: RepositorioLibro,
-                 genero_service: GeneroService,
-                 editorial_service: EditorialService,
-                 repositorio_precios: RepositorioPrecio,
-                 repositorio_stock: RepositorioStock) -> None:
+    def __init__(
+        self,
+        repositorio: RepositorioLibro,
+        genero_service: GeneroService,
+        editorial_service: EditorialService,
+        repositorio_precios: RepositorioPrecio,
+        repositorio_stock: RepositorioStock,
+    ) -> None:
         self._repositorio = repositorio
         self._genero_service = genero_service
         self._editorial_service = editorial_service
         self._repositorio_precios = repositorio_precios
         self._repositorio_stock = repositorio_stock
 
-    def crear(self, isbn: str, titulo: str, autor: str, genero_id: int,
-              editorial_id: int, idioma: str,
-              fecha_publicacion: datetime.date,
-              fecha_primera_publicacion: datetime.date,
-              num_paginas: int, peso: float,
-              descripcion: Optional[str] = None,
-              ranking: Optional[int] = None) -> Libro:
+    def crear(
+        self,
+        isbn: str,
+        titulo: str,
+        autor: str,
+        genero_id: int,
+        editorial_id: int,
+        idioma: str,
+        fecha_publicacion: datetime.date,
+        fecha_primera_publicacion: datetime.date,
+        num_paginas: int,
+        peso: float,
+        descripcion: Optional[str] = None,
+        ranking: Optional[int] = None,
+    ) -> Libro:
         """Valida los datos y da de alta un nuevo libro en el catálogo.
 
         Raises:
@@ -376,13 +423,21 @@ class LibroService:
         self._validar_fechas(fecha_publicacion, fecha_primera_publicacion)
         self._validar_num_paginas(num_paginas)
         self._validar_peso(peso)
-        libro = Libro(id=_siguiente_id(self._repositorio.leer_todos()),
-                      isbn=isbn, titulo=titulo, autor=autor, genero=genero,
-                      editorial=editorial, idioma=idioma,
-                      fecha_publicacion=fecha_publicacion,
-                      fecha_primera_publicacion=fecha_primera_publicacion,
-                      num_paginas=num_paginas, peso=peso,
-                      descripcion=descripcion, ranking=ranking)
+        libro = Libro(
+            id=_siguiente_id(self._repositorio.leer_todos()),
+            isbn=isbn,
+            titulo=titulo,
+            autor=autor,
+            genero=genero,
+            editorial=editorial,
+            idioma=idioma,
+            fecha_publicacion=fecha_publicacion,
+            fecha_primera_publicacion=fecha_primera_publicacion,
+            num_paginas=num_paginas,
+            peso=peso,
+            descripcion=descripcion,
+            ranking=ranking,
+        )
         return self._repositorio.crear(libro)
 
     def obtener_por_id(self, id: int) -> Optional[Libro]:
@@ -393,17 +448,22 @@ class LibroService:
         """Devuelve todos los libros del catálogo."""
         return self._repositorio.leer_todos()
 
-    def actualizar(self, id: int, isbn: Optional[str] = None,
-                   titulo: Optional[str] = None, autor: Optional[str] = None,
-                   genero_id: Optional[int] = None,
-                   editorial_id: Optional[int] = None,
-                   idioma: Optional[str] = None,
-                   fecha_publicacion: Optional[datetime.date] = None,
-                   fecha_primera_publicacion: Optional[datetime.date] = None,
-                   num_paginas: Optional[int] = None,
-                   peso: Optional[float] = None,
-                   descripcion: Optional[str] = None,
-                   ranking: Optional[int] = None) -> Libro:
+    def actualizar(
+        self,
+        id: int,
+        isbn: Optional[str] = None,
+        titulo: Optional[str] = None,
+        autor: Optional[str] = None,
+        genero_id: Optional[int] = None,
+        editorial_id: Optional[int] = None,
+        idioma: Optional[str] = None,
+        fecha_publicacion: Optional[datetime.date] = None,
+        fecha_primera_publicacion: Optional[datetime.date] = None,
+        num_paginas: Optional[int] = None,
+        peso: Optional[float] = None,
+        descripcion: Optional[str] = None,
+        ranking: Optional[int] = None,
+    ) -> Libro:
         """Actualiza los datos de un libro existente.
 
         Raises:
@@ -415,8 +475,9 @@ class LibroService:
             raise ValueError(f"No existe un libro con id {id}.")
 
         nueva_fecha_publicacion = fecha_publicacion or libro.fecha_publicacion
-        nueva_fecha_primera = (fecha_primera_publicacion
-                                or libro.fecha_primera_publicacion)
+        nueva_fecha_primera = (
+            fecha_primera_publicacion or libro.fecha_primera_publicacion
+        )
         self._validar_fechas(nueva_fecha_publicacion, nueva_fecha_primera)
 
         if isbn is not None:
@@ -454,14 +515,12 @@ class LibroService:
         Raises:
             ValueError: Si el libro tiene precios o stock registrados.
         """
-        if any(precio.libro.id == id for precio in self._repositorio_precios.leer_todos()):
-            raise ValueError(
-                "No se puede eliminar el libro: tiene precios asociados."
-            )
+        if any(
+            precio.libro.id == id for precio in self._repositorio_precios.leer_todos()
+        ):
+            raise ValueError("No se puede eliminar el libro: tiene precios asociados.")
         if self._repositorio_stock.leer_por_libro(id) is not None:
-            raise ValueError(
-                "No se puede eliminar el libro: tiene stock registrado."
-            )
+            raise ValueError("No se puede eliminar el libro: tiene stock registrado.")
         return self._repositorio.eliminar(id)
 
     def _obtener_genero_o_error(self, genero_id: int) -> Genero:
@@ -473,9 +532,7 @@ class LibroService:
     def _obtener_editorial_o_error(self, editorial_id: int) -> Editorial:
         editorial = self._editorial_service.obtener_por_id(editorial_id)
         if editorial is None:
-            raise ValueError(
-                f"No existe una editorial con id {editorial_id}."
-            )
+            raise ValueError(f"No existe una editorial con id {editorial_id}.")
         return editorial
 
     @staticmethod
@@ -490,8 +547,9 @@ class LibroService:
             raise ValueError(f"ISBN inválido: {isbn}.")
 
     @staticmethod
-    def _validar_fechas(fecha_publicacion: datetime.date,
-                         fecha_primera_publicacion: datetime.date) -> None:
+    def _validar_fechas(
+        fecha_publicacion: datetime.date, fecha_primera_publicacion: datetime.date
+    ) -> None:
         if fecha_primera_publicacion > fecha_publicacion:
             raise ValueError(
                 "La fecha de primera publicación no puede ser posterior "
@@ -512,9 +570,12 @@ class LibroService:
 class PrecioService:
     """Lógica de negocio para la gestión de precios de libros."""
 
-    def __init__(self, repositorio: RepositorioPrecio,
-                 libro_service: LibroService,
-                 moneda_service: MonedaService) -> None:
+    def __init__(
+        self,
+        repositorio: RepositorioPrecio,
+        libro_service: LibroService,
+        moneda_service: MonedaService,
+    ) -> None:
         self._repositorio = repositorio
         self._libro_service = libro_service
         self._moneda_service = moneda_service
@@ -529,8 +590,12 @@ class PrecioService:
         libro = self._obtener_libro_o_error(libro_id)
         moneda = self._obtener_moneda_o_error(moneda_id)
         self._validar_valor(valor)
-        precio = Precio(id=_siguiente_id(self._repositorio.leer_todos()),
-                         libro=libro, moneda=moneda, valor=valor)
+        precio = Precio(
+            id=_siguiente_id(self._repositorio.leer_todos()),
+            libro=libro,
+            moneda=moneda,
+            valor=valor,
+        )
         return self._repositorio.crear(precio)
 
     def obtener_por_id(self, id: int) -> Optional[Precio]:
@@ -541,8 +606,9 @@ class PrecioService:
         """Devuelve todos los precios registrados."""
         return self._repositorio.leer_todos()
 
-    def actualizar(self, id: int, moneda_id: Optional[int] = None,
-                   valor: Optional[float] = None) -> Precio:
+    def actualizar(
+        self, id: int, moneda_id: Optional[int] = None, valor: Optional[float] = None
+    ) -> Precio:
         """Actualiza los datos de un precio existente.
 
         Raises:
@@ -584,17 +650,22 @@ class PrecioService:
 class StockService:
     """Lógica de negocio para la gestión del stock de libros."""
 
-    ESTADOS_VALIDOS = frozenset(
-        {"disponible", "agotado", "reservado", "descatalogado"}
-    )
+    ESTADOS_VALIDOS = frozenset({"disponible", "agotado", "reservado", "descatalogado"})
 
-    def __init__(self, repositorio: RepositorioStock,
-                 libro_service: LibroService) -> None:
+    def __init__(
+        self, repositorio: RepositorioStock, libro_service: LibroService
+    ) -> None:
         self._repositorio = repositorio
         self._libro_service = libro_service
 
-    def crear(self, libro_id: int, cantidad: int, estado: str,
-              ubicacion: str, fecha_ingreso: datetime.date) -> Stock:
+    def crear(
+        self,
+        libro_id: int,
+        cantidad: int,
+        estado: str,
+        ubicacion: str,
+        fecha_ingreso: datetime.date,
+    ) -> Stock:
         """Valida los datos y registra el stock inicial de un libro.
 
         Raises:
@@ -604,19 +675,28 @@ class StockService:
         libro = self._obtener_libro_o_error(libro_id)
         self._validar_cantidad(cantidad)
         self._validar_estado(estado)
-        stock = Stock(id=libro.id, libro=libro, cantidad=cantidad,
-                       estado=estado, ubicacion=ubicacion,
-                       fecha_ingreso=fecha_ingreso)
+        stock = Stock(
+            id=libro.id,
+            libro=libro,
+            cantidad=cantidad,
+            estado=estado,
+            ubicacion=ubicacion,
+            fecha_ingreso=fecha_ingreso,
+        )
         return self._repositorio.crear(stock)
 
     def obtener_por_libro(self, libro_id: int) -> Optional[Stock]:
         """Obtiene el stock de un libro, o None si no tiene stock registrado."""
         return self._repositorio.leer_por_libro(libro_id)
 
-    def actualizar(self, libro_id: int, cantidad: Optional[int] = None,
-                   estado: Optional[str] = None,
-                   ubicacion: Optional[str] = None,
-                   fecha_ingreso: Optional[datetime.date] = None) -> Stock:
+    def actualizar(
+        self,
+        libro_id: int,
+        cantidad: Optional[int] = None,
+        estado: Optional[str] = None,
+        ubicacion: Optional[str] = None,
+        fecha_ingreso: Optional[datetime.date] = None,
+    ) -> Stock:
         """Actualiza el stock existente de un libro.
 
         Raises:
@@ -625,9 +705,7 @@ class StockService:
         """
         stock = self._repositorio.leer_por_libro(libro_id)
         if stock is None:
-            raise ValueError(
-                f"No existe stock para el libro con id {libro_id}."
-            )
+            raise ValueError(f"No existe stock para el libro con id {libro_id}.")
         if cantidad is not None:
             self._validar_cantidad(cantidad)
             stock.cantidad = cantidad
@@ -669,16 +747,20 @@ class CotizacionDolarService:
 
     NOMBRES_API = {
         "bolsa": "mep",
-        "contado con liquidación": "ccl",
+        "contadoconliqui": "ccl",
     }
 
-    def __init__(self, repositorio: RepositorioCotizacionDolar,
-                 tipo_cotizacion_service: TipoCotizacionService) -> None:
+    def __init__(
+        self,
+        repositorio: RepositorioCotizacionDolar,
+        tipo_cotizacion_service: TipoCotizacionService,
+    ) -> None:
         self._repositorio = repositorio
         self._tipo_cotizacion_service = tipo_cotizacion_service
 
-    def crear(self, tipo_cotizacion_id: int, fecha: datetime.date,
-              valor: float) -> CotizacionDolar:
+    def crear(
+        self, tipo_cotizacion_id: int, fecha: datetime.date, valor: float
+    ) -> CotizacionDolar:
         """Valida los datos y registra una nueva cotización del dólar.
 
         Raises:
@@ -688,34 +770,31 @@ class CotizacionDolarService:
         tipo = self._obtener_tipo_o_error(tipo_cotizacion_id)
         self._validar_valor(valor)
         self._validar_fecha(fecha)
-        cotizacion = CotizacionDolar(id=self._generar_id(),
-                                      tipo_cotizacion=tipo, fecha=fecha,
-                                      valor=valor)
+        cotizacion = CotizacionDolar(
+            id=self._generar_id(), tipo_cotizacion=tipo, fecha=fecha, valor=valor
+        )
         return self._repositorio.crear(cotizacion)
 
     def obtener_por_tipo_y_fecha(
         self, tipo_cotizacion_id: int, fecha: datetime.date
     ) -> Optional[CotizacionDolar]:
         """Obtiene la cotización de un tipo en una fecha dada, o None."""
-        return self._repositorio.leer_por_tipo_y_fecha(tipo_cotizacion_id,
-                                                         fecha)
+        return self._repositorio.leer_por_tipo_y_fecha(tipo_cotizacion_id, fecha)
 
-    def listar_historico(self,
-                          tipo_cotizacion_id: int) -> List[CotizacionDolar]:
+    def listar_historico(self, tipo_cotizacion_id: int) -> List[CotizacionDolar]:
         """Devuelve el histórico de cotizaciones de un tipo dado."""
         return self._repositorio.leer_historico_por_tipo(tipo_cotizacion_id)
 
-    def actualizar(self, tipo_cotizacion_id: int, fecha: datetime.date,
-                   valor: float) -> CotizacionDolar:
+    def actualizar(
+        self, tipo_cotizacion_id: int, fecha: datetime.date, valor: float
+    ) -> CotizacionDolar:
         """Actualiza el valor de una cotización existente.
 
         Raises:
             ValueError: Si no existe la cotización, o el nuevo valor no
                 es mayor a cero.
         """
-        cotizacion = self._repositorio.leer_por_tipo_y_fecha(
-            tipo_cotizacion_id, fecha
-        )
+        cotizacion = self._repositorio.leer_por_tipo_y_fecha(tipo_cotizacion_id, fecha)
         if cotizacion is None:
             raise ValueError("No existe una cotización para ese tipo y fecha.")
         self._validar_valor(valor)
@@ -729,75 +808,110 @@ class CotizacionDolarService:
         """
         return self._repositorio.eliminar(tipo_cotizacion_id, fecha)
 
-    def obtener_cotizaciones(self) -> List[CotizacionDolar]:
-        """Consulta la API del dólar, guarda las cotizaciones en la base
-        de datos y devuelve la lista de cotizaciones registradas.
 
-        Lee la URL de la API desde el archivo .env.
+    def obtener_cotizaciones(self) -> List[CotizacionDolar]:
+        """Consulta la API y registra las cotizaciones en la base de datos.
+
+        Utiliza la fecha de actualización informada por la API y guarda
+        tanto el valor de compra como el valor de venta.
 
         Returns:
-            List[CotizacionDolar]: Las cotizaciones registradas hoy.
+            List[CotizacionDolar]: Cotizaciones obtenidas desde la API.
 
         Raises:
             RuntimeError: Si la API no responde o devuelve un error.
         """
         load_dotenv(RUTA_ENV)
+
         url = os.getenv("API_URL")
+
         if not url:
-            raise RuntimeError(
-                f"No se encontró API_URL en el archivo {RUTA_ENV}."
-            )
+            raise RuntimeError(f"No se encontró API_URL en el archivo {RUTA_ENV}.")
 
         respuesta = requests.get(url, timeout=10)
 
         if respuesta.status_code != 200:
-            raise RuntimeError(
-                f"Error al consultar la API: {respuesta.status_code}"
-            )
+            raise RuntimeError(f"Error al consultar la API: {respuesta.status_code}")
 
         datos = respuesta.json()
-        hoy = datetime.date.today()
         cotizaciones_registradas: List[CotizacionDolar] = []
 
         for dato in datos:
+            casa = dato.get("casa", "")
             nombre_tipo = dato.get("nombre", "")
+            valor_compra = dato.get("compra")
             valor_venta = dato.get("venta")
+            fecha_actualizacion = dato.get("fechaActualizacion", "")
 
-            if not nombre_tipo or valor_venta is None:
+            if (
+                not casa
+                or not nombre_tipo
+                or valor_compra is None
+                or valor_venta is None
+                or not fecha_actualizacion
+            ):
                 continue
 
-            nombre_api = nombre_tipo.lower()
-            nombre_buscado = self.NOMBRES_API.get(nombre_api, nombre_api)
+            nombre_casa = casa.lower()
+
+            nombre_buscado = self.NOMBRES_API.get(
+                nombre_casa,
+                nombre_casa,
+            )
+
             tipo = None
-            for t in self._tipo_cotizacion_service.listar():
-                if t.nombre.lower() == nombre_buscado:
-                    tipo = t
+
+            for tipo_existente in self._tipo_cotizacion_service.listar():
+                if tipo_existente.nombre.lower() == nombre_buscado:
+                    tipo = tipo_existente
                     break
 
             if tipo is None:
+                tipo = self._tipo_cotizacion_service.crear(
+                    nombre=nombre_tipo,
+                    descripcion="Tipo creado automáticamente desde DolarAPI.",
+                )
+
+            try:
+                partes_fecha = fecha_actualizacion[:10].split("-")
+
+                fecha = datetime.date(
+                    int(partes_fecha[0]),
+                    int(partes_fecha[1]),
+                    int(partes_fecha[2]),
+                )
+            except (ValueError, IndexError):
                 continue
 
-            existente = self._repositorio.leer_por_tipo_y_fecha(tipo.id, hoy)
+            existente = self._repositorio.leer_por_tipo_y_fecha(
+                tipo.id,
+                fecha,
+            )
+
             if existente is not None:
+                existente.compra = float(valor_compra)
+                existente.valor = float(valor_venta)
+
+                self._repositorio.actualizar(existente)
+
                 cotizaciones_registradas.append(existente)
                 continue
 
             cotizacion = CotizacionDolar(
                 id=self._generar_id(),
                 tipo_cotizacion=tipo,
-                fecha=hoy,
+                fecha=fecha,
+                compra=float(valor_compra),
                 valor=float(valor_venta),
             )
+
             self._repositorio.crear(cotizacion)
             cotizaciones_registradas.append(cotizacion)
 
         return cotizaciones_registradas
 
-    def _obtener_tipo_o_error(self,
-                              tipo_cotizacion_id: int) -> TipoCotizacion:
-        tipo = self._tipo_cotizacion_service.obtener_por_id(
-            tipo_cotizacion_id
-        )
+    def _obtener_tipo_o_error(self, tipo_cotizacion_id: int) -> TipoCotizacion:
+        tipo = self._tipo_cotizacion_service.obtener_por_id(tipo_cotizacion_id)
         if tipo is None:
             raise ValueError(
                 f"No existe un tipo de cotización con id {tipo_cotizacion_id}."

@@ -456,14 +456,15 @@ class Stock(EntidadBase):
         return f"Stock(id={self._id}, libro={self._libro.titulo}, cantidad={self._cantidad}, estado={self._estado})"
 
 class CotizacionDolar(EntidadBase):
-    """Representa el registro histórico del valor del dólar por tipo y fecha."""
+    """Representa una cotización del dólar por tipo y fecha."""
 
-    def __init__(self, id: int, tipo_cotizacion: TipoCotizacion,
-                 fecha: datetime.date, valor: float) -> None:
+    def __init__(self,id: int,tipo_cotizacion: TipoCotizacion,fecha: datetime.date,
+                 valor: float,compra: Optional[float] = None,) -> None:
         super().__init__(id)
         self.tipo_cotizacion = tipo_cotizacion
         self.fecha = fecha
         self.valor = valor
+        self.compra = compra
 
     @property
     def tipo_cotizacion(self) -> TipoCotizacion:
@@ -471,7 +472,11 @@ class CotizacionDolar(EntidadBase):
 
     @tipo_cotizacion.setter
     def tipo_cotizacion(self, valor: TipoCotizacion) -> None:
-        self._tipo_cotizacion = _validar_instancia(valor, TipoCotizacion, "tipo de cotización")
+        self._tipo_cotizacion = _validar_instancia(
+            valor,
+            TipoCotizacion,
+            "tipo de cotización",
+        )
 
     @property
     def fecha(self) -> datetime.date:
@@ -483,11 +488,30 @@ class CotizacionDolar(EntidadBase):
 
     @property
     def valor(self) -> float:
+        """Devuelve el valor de venta."""
         return self._valor
 
     @valor.setter
     def valor(self, valor: float) -> None:
         self._valor = _validar_positivo(valor, "valor")
 
+    @property
+    def compra(self) -> Optional[float]:
+        return self._compra
+
+    @compra.setter
+    def compra(self, valor: Optional[float]) -> None:
+        if valor is None:
+            self._compra = None
+        else:
+            self._compra = _validar_positivo(valor, "compra")
+
     def __repr__(self) -> str:
-        return f"CotizacionDolar(id={self._id}, tipo={self._tipo_cotizacion.nombre}, fecha={self._fecha}, valor={self._valor})"
+        return (
+            f"CotizacionDolar("
+            f"id={self._id}, "
+            f"tipo={self._tipo_cotizacion.nombre}, "
+            f"fecha={self._fecha}, "
+            f"compra={self._compra}, "
+            f"venta={self._valor})"
+        )

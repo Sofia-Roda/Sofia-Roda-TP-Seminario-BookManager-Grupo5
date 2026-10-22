@@ -130,6 +130,7 @@ class CotizacionDolarModel(Base):
     id = Column(Integer, primary_key=True)
     tipo_cotizacion_id = Column(Integer, ForeignKey("tipos_cotizacion.id"), nullable=False)
     fecha = Column(Date, nullable=False)
+    compra = Column(Float, nullable=True)
     valor = Column(Float, nullable=False)
 
     tipo_cotizacion = relationship("TipoCotizacionModel", back_populates="cotizaciones")

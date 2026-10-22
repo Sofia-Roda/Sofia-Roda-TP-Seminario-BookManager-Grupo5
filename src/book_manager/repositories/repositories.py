@@ -691,6 +691,7 @@ class RepositorioCotizacionDolar(IRepositorioCotizacionDolar):
             tipo_cotizacion=self._repositorio_tipos.leer_por_id(modelo.tipo_cotizacion_id),
             fecha=modelo.fecha,
             valor=modelo.valor,
+            compra=modelo.compra,
         )
 
     def crear(self, cotizacion: CotizacionDolar) -> CotizacionDolar:
@@ -701,6 +702,7 @@ class RepositorioCotizacionDolar(IRepositorioCotizacionDolar):
                 id=cotizacion.id,
                 tipo_cotizacion_id=cotizacion.tipo_cotizacion.id,
                 fecha=cotizacion.fecha,
+                compra=cotizacion.compra,
                 valor=cotizacion.valor,
             )
             sesion.add(modelo)
@@ -737,6 +739,7 @@ class RepositorioCotizacionDolar(IRepositorioCotizacionDolar):
             ).scalar_one_or_none()
             if modelo is None:
                 raise ValueError("No se encontró la cotización para actualizar.")
+            modelo.compra = cotizacion.compra
             modelo.valor = cotizacion.valor
         return cotizacion
 
