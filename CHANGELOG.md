@@ -1,5 +1,15 @@
 # Changelog
 
+## Sprint 3
+
+[Ejercicio 1]
+- Se creó la rama Sprint_3 a partir de Sprint_2.
+- Se generó la carpeta scraper con la estructura del proyecto Scrapy mediante scrapy startproject (scrapy.cfg, items.py, middlewares.py, pipelines.py, settings.py y spiders/).
+- Se agregó la carpeta reportes para almacenar los reportes Excel generados.
+- Se agregó scrapy a requirements.txt.
+- Se actualizó el README.md con el objetivo, la introducción y el contexto del Sprint 3.
+- Se corrigió en el CHANGELOG del Sprint 2 [Ejercicio 2] la descripción de la conexión: si no está definida DATABASE_URL se lanza un ValueError (no se usa SQLite por defecto).
+
 ## Sprint 2
 
 [Ejercicio 8]
@@ -57,8 +67,7 @@
 
 [Ejercicio 2]
 - Se creó la clase ConexionDB en database/connection.py para manejar la conexión con SQLAlchemy.
-- Se configuró la URL de conexión a partir de la variable DATABASE_URL del archivo .env (Supabase/PostgreSQL); si no está definida, se usa SQLite por defecto (book_manager.db en la raíz del proyecto).
-- Se activó la validación de claves foráneas cuando la base es SQLite.
+- Se configuró la URL de conexión a partir de la variable DATABASE_URL del archivo .env (Supabase/PostgreSQL); si no está definida, se lanza un ValueError.
 - Se configuró la fábrica de sesiones con expire_on_commit=False.
 - Se agregaron métodos para crear sesiones, probar la conexión y cerrarla.
 - Se agregaron SQLAlchemy y psycopg[binary] a requirements.txt y se ignoraron los archivos .db.
