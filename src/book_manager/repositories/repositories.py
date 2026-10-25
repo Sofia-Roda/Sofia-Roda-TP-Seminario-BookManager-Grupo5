@@ -1,4 +1,5 @@
 
+"""Contiene los repositorios encargados del acceso a la base de datos."""
 import abc
 import datetime
 from typing import Generic, List, Optional, TypeVar
@@ -232,6 +233,7 @@ class RepositorioGenero(IRepositorio[Genero]):
         self._conexion = conexion
 
     def crear(self, entidad: Genero) -> Genero:
+        """Guarda un nuevo género en la base de datos."""
         if self.leer_por_id(entidad.id) is not None:
             raise ValueError(f"Ya existe un género con id {entidad.id}.")
         with self._conexion.transaccion() as sesion:
@@ -244,6 +246,7 @@ class RepositorioGenero(IRepositorio[Genero]):
         return entidad
 
     def leer_por_id(self, id: int) -> Optional[Genero]:
+        """Obtiene un género por su id."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.get(GeneroModel, id)
             if modelo is None:
@@ -255,6 +258,7 @@ class RepositorioGenero(IRepositorio[Genero]):
             )
 
     def leer_todos(self) -> List[Genero]:
+        """Devuelve todos los géneros registrados."""
         with self._conexion.transaccion() as sesion:
             modelos = sesion.execute(select(GeneroModel)).scalars().all()
             return [
@@ -263,6 +267,7 @@ class RepositorioGenero(IRepositorio[Genero]):
             ]
 
     def actualizar(self, entidad: Genero) -> Genero:
+        """Actualiza los datos de un género existente."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.get(GeneroModel, entidad.id)
             if modelo is None:
@@ -272,6 +277,7 @@ class RepositorioGenero(IRepositorio[Genero]):
         return entidad
 
     def eliminar(self, id: int) -> bool:
+        """Elimina un género por su id."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.get(GeneroModel, id)
             if modelo is None:
@@ -287,6 +293,7 @@ class RepositorioEditorial(IRepositorio[Editorial]):
         self._conexion = conexion
 
     def crear(self, entidad: Editorial) -> Editorial:
+        """Crea una nueva editorial en la base de datos."""
         if self.leer_por_id(entidad.id) is not None:
             raise ValueError(f"Ya existe una editorial con id {entidad.id}.")
         with self._conexion.transaccion() as sesion:
@@ -302,6 +309,7 @@ class RepositorioEditorial(IRepositorio[Editorial]):
         return entidad
 
     def leer_por_id(self, id: int) -> Optional[Editorial]:
+        """Obtiene una editorial por su id."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.get(EditorialModel, id)
             if modelo is None:
@@ -316,6 +324,7 @@ class RepositorioEditorial(IRepositorio[Editorial]):
             )
 
     def leer_todos(self) -> List[Editorial]:
+        """Devuelve todas las editoriales registradas."""
         with self._conexion.transaccion() as sesion:
             modelos = sesion.execute(select(EditorialModel)).scalars().all()
             return [
@@ -327,6 +336,7 @@ class RepositorioEditorial(IRepositorio[Editorial]):
             ]
 
     def actualizar(self, entidad: Editorial) -> Editorial:
+        """Actualiza los datos de una editorial existente."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.get(EditorialModel, entidad.id)
             if modelo is None:
@@ -339,6 +349,7 @@ class RepositorioEditorial(IRepositorio[Editorial]):
         return entidad
 
     def eliminar(self, id: int) -> bool:
+        """Elimina una editorial por su id."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.get(EditorialModel, id)
             if modelo is None:
@@ -354,6 +365,7 @@ class RepositorioMoneda(IRepositorio[Moneda]):
         self._conexion = conexion
 
     def crear(self, entidad: Moneda) -> Moneda:
+        """Guarda una nueva moneda en la base de datos."""
         if self.leer_por_id(entidad.id) is not None:
             raise ValueError(f"Ya existe una moneda con id {entidad.id}.")
         with self._conexion.transaccion() as sesion:
@@ -367,6 +379,7 @@ class RepositorioMoneda(IRepositorio[Moneda]):
         return entidad
 
     def leer_por_id(self, id: int) -> Optional[Moneda]:
+        """Devuelve una moneda por su id."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.get(MonedaModel, id)
             if modelo is None:
@@ -379,6 +392,7 @@ class RepositorioMoneda(IRepositorio[Moneda]):
             )
 
     def leer_todos(self) -> List[Moneda]:
+        """Devuelve todas las monedas registradas."""
         with self._conexion.transaccion() as sesion:
             modelos = sesion.execute(select(MonedaModel)).scalars().all()
             return [
@@ -387,6 +401,7 @@ class RepositorioMoneda(IRepositorio[Moneda]):
             ]
 
     def actualizar(self, entidad: Moneda) -> Moneda:
+        """Actualiza los datos de una moneda existente."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.get(MonedaModel, entidad.id)
             if modelo is None:
@@ -397,6 +412,7 @@ class RepositorioMoneda(IRepositorio[Moneda]):
         return entidad
 
     def eliminar(self, id: int) -> bool:
+        """Elimina una moneda por su id."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.get(MonedaModel, id)
             if modelo is None:
@@ -412,6 +428,7 @@ class RepositorioTipoCotizacion(IRepositorio[TipoCotizacion]):
         self._conexion = conexion
 
     def crear(self, entidad: TipoCotizacion) -> TipoCotizacion:
+        """Guarda un nuevo tipo de cotización en la base de datos."""
         if self.leer_por_id(entidad.id) is not None:
             raise ValueError(f"Ya existe un tipo de cotización con id {entidad.id}.")
         with self._conexion.transaccion() as sesion:
@@ -424,6 +441,7 @@ class RepositorioTipoCotizacion(IRepositorio[TipoCotizacion]):
         return entidad
 
     def leer_por_id(self, id: int) -> Optional[TipoCotizacion]:
+        """Devuelve un tipo de cotización por su id."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.get(TipoCotizacionModel, id)
             if modelo is None:
@@ -435,6 +453,7 @@ class RepositorioTipoCotizacion(IRepositorio[TipoCotizacion]):
             )
 
     def leer_todos(self) -> List[TipoCotizacion]:
+        """Devuelve todos los tipos de cotización registrados."""
         with self._conexion.transaccion() as sesion:
             modelos = sesion.execute(select(TipoCotizacionModel)).scalars().all()
             return [
@@ -443,6 +462,7 @@ class RepositorioTipoCotizacion(IRepositorio[TipoCotizacion]):
             ]
 
     def actualizar(self, entidad: TipoCotizacion) -> TipoCotizacion:
+        """Actualiza los datos de un tipo de cotización existente."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.get(TipoCotizacionModel, entidad.id)
             if modelo is None:
@@ -452,6 +472,7 @@ class RepositorioTipoCotizacion(IRepositorio[TipoCotizacion]):
         return entidad
 
     def eliminar(self, id: int) -> bool:
+        """Elimina un tipo de cotización por su id."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.get(TipoCotizacionModel, id)
             if modelo is None:
@@ -471,6 +492,7 @@ class RepositorioLibro(IRepositorio[Libro]):
         self._repositorio_editoriales = repositorio_editoriales
 
     def _modelo_a_entidad(self, modelo: LibroModel) -> Libro:
+        """Convierte un modelo de base de datos en una entidad Libro."""
         return Libro(
             id=modelo.id,
             isbn=modelo.isbn,
@@ -488,6 +510,7 @@ class RepositorioLibro(IRepositorio[Libro]):
         )
 
     def crear(self, entidad: Libro) -> Libro:
+        """Guarda un nuevo libro en la base de datos."""
         if self.leer_por_id(entidad.id) is not None:
             raise ValueError(f"Ya existe un libro con id {entidad.id}.")
         with self._conexion.transaccion() as sesion:
@@ -510,6 +533,7 @@ class RepositorioLibro(IRepositorio[Libro]):
         return entidad
 
     def leer_por_id(self, id: int) -> Optional[Libro]:
+        """Devuelve un libro por su id."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.get(LibroModel, id)
             if modelo is None:
@@ -517,11 +541,13 @@ class RepositorioLibro(IRepositorio[Libro]):
             return self._modelo_a_entidad(modelo)
 
     def leer_todos(self) -> List[Libro]:
+        """Devuelve todos los libros registrados."""
         with self._conexion.transaccion() as sesion:
             modelos = sesion.execute(select(LibroModel)).scalars().all()
             return [self._modelo_a_entidad(m) for m in modelos]
 
     def actualizar(self, entidad: Libro) -> Libro:
+        """Actualiza los datos de un libro existente."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.get(LibroModel, entidad.id)
             if modelo is None:
@@ -541,6 +567,7 @@ class RepositorioLibro(IRepositorio[Libro]):
         return entidad
 
     def eliminar(self, id: int) -> bool:
+        """Elimina un libro por su id."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.get(LibroModel, id)
             if modelo is None:
@@ -560,6 +587,7 @@ class RepositorioPrecio(IRepositorio[Precio]):
         self._repositorio_monedas = repositorio_monedas
 
     def _modelo_a_entidad(self, modelo: PrecioModel) -> Precio:
+        """Convierte un modelo de base de datos en una entidad Precio."""
         return Precio(
             id=modelo.id,
             libro=self._repositorio_libros.leer_por_id(modelo.libro_id),
@@ -568,6 +596,7 @@ class RepositorioPrecio(IRepositorio[Precio]):
         )
 
     def crear(self, entidad: Precio) -> Precio:
+        """Guarda un nuevo precio en la base de datos."""
         if self.leer_por_id(entidad.id) is not None:
             raise ValueError(f"Ya existe un precio con id {entidad.id}.")
         with self._conexion.transaccion() as sesion:
@@ -581,6 +610,7 @@ class RepositorioPrecio(IRepositorio[Precio]):
         return entidad
 
     def leer_por_id(self, id: int) -> Optional[Precio]:
+        """Devuelve un precio por su id."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.get(PrecioModel, id)
             if modelo is None:
@@ -588,11 +618,13 @@ class RepositorioPrecio(IRepositorio[Precio]):
             return self._modelo_a_entidad(modelo)
 
     def leer_todos(self) -> List[Precio]:
+        """Devuelve todos los precios registrados."""
         with self._conexion.transaccion() as sesion:
             modelos = sesion.execute(select(PrecioModel)).scalars().all()
             return [self._modelo_a_entidad(m) for m in modelos]
 
     def actualizar(self, entidad: Precio) -> Precio:
+        """Actualiza los datos de un precio existente."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.get(PrecioModel, entidad.id)
             if modelo is None:
@@ -603,6 +635,7 @@ class RepositorioPrecio(IRepositorio[Precio]):
         return entidad
 
     def eliminar(self, id: int) -> bool:
+        """Elimina un precio por su id."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.get(PrecioModel, id)
             if modelo is None:
@@ -620,6 +653,7 @@ class RepositorioStock(IRepositorioStock):
         self._repositorio_libros = repositorio_libros
 
     def _modelo_a_entidad(self, modelo: StockModel) -> Stock:
+        """Convierte un modelo de base de datos en una entidad Stock."""
         return Stock(
             id=modelo.id,
             libro=self._repositorio_libros.leer_por_id(modelo.libro_id),
@@ -630,6 +664,7 @@ class RepositorioStock(IRepositorioStock):
         )
 
     def crear(self, stock: Stock) -> Stock:
+        """Guarda un nuevo stock en la base de datos."""
         if self.leer_por_libro(stock.libro.id) is not None:
             raise ValueError(f"Ya existe stock para el libro con id {stock.libro.id}.")
         with self._conexion.transaccion() as sesion:
@@ -645,6 +680,7 @@ class RepositorioStock(IRepositorioStock):
         return stock
 
     def leer_por_libro(self, libro_id: int) -> Optional[Stock]:
+        """Devuelve el stock asociado a un libro por su id."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.execute(
                 select(StockModel).where(StockModel.libro_id == libro_id)
@@ -654,6 +690,7 @@ class RepositorioStock(IRepositorioStock):
             return self._modelo_a_entidad(modelo)
 
     def actualizar(self, stock: Stock) -> Stock:
+        """Actualiza los datos de un stock existente."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.execute(
                 select(StockModel).where(StockModel.libro_id == stock.libro.id)
@@ -667,6 +704,7 @@ class RepositorioStock(IRepositorioStock):
         return stock
 
     def eliminar(self, libro_id: int) -> bool:
+        """Elimina el stock asociado a un libro por su id."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.execute(
                 select(StockModel).where(StockModel.libro_id == libro_id)
@@ -686,6 +724,7 @@ class RepositorioCotizacionDolar(IRepositorioCotizacionDolar):
         self._repositorio_tipos = repositorio_tipos
 
     def _modelo_a_entidad(self, modelo: CotizacionDolarModel) -> CotizacionDolar:
+        """Convierte un modelo de base de datos en una entidad CotizacionDolar."""
         return CotizacionDolar(
             id=modelo.id,
             tipo_cotizacion=self._repositorio_tipos.leer_por_id(modelo.tipo_cotizacion_id),
@@ -695,6 +734,7 @@ class RepositorioCotizacionDolar(IRepositorioCotizacionDolar):
         )
 
     def crear(self, cotizacion: CotizacionDolar) -> CotizacionDolar:
+        """Guarda una nueva cotización de dólar en la base de datos."""
         if self.leer_por_tipo_y_fecha(cotizacion.tipo_cotizacion.id, cotizacion.fecha) is not None:
             raise ValueError("Ya existe una cotización para ese tipo y fecha.")
         with self._conexion.transaccion() as sesion:
@@ -709,6 +749,7 @@ class RepositorioCotizacionDolar(IRepositorioCotizacionDolar):
         return cotizacion
 
     def leer_por_tipo_y_fecha(self, tipo_id: int, fecha: datetime.date) -> Optional[CotizacionDolar]:
+        """Devuelve una cotización de dólar por tipo y fecha."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.execute(
                 select(CotizacionDolarModel).where(
@@ -721,6 +762,7 @@ class RepositorioCotizacionDolar(IRepositorioCotizacionDolar):
             return self._modelo_a_entidad(modelo)
 
     def leer_historico_por_tipo(self, tipo_id: int) -> List[CotizacionDolar]:
+        """Devuelve el histórico de cotizaciones para un tipo específico."""
         with self._conexion.transaccion() as sesion:
             modelos = sesion.execute(
                 select(CotizacionDolarModel).where(
@@ -730,6 +772,7 @@ class RepositorioCotizacionDolar(IRepositorioCotizacionDolar):
             return [self._modelo_a_entidad(m) for m in modelos]
 
     def actualizar(self, cotizacion: CotizacionDolar) -> CotizacionDolar:
+        """Actualiza una cotización de dólar existente."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.execute(
                 select(CotizacionDolarModel).where(
@@ -744,6 +787,7 @@ class RepositorioCotizacionDolar(IRepositorioCotizacionDolar):
         return cotizacion
 
     def eliminar(self, tipo_id: int, fecha: datetime.date) -> bool:
+        """Elimina una cotización de dólar por tipo y fecha."""
         with self._conexion.transaccion() as sesion:
             modelo = sesion.execute(
                 select(CotizacionDolarModel).where(
