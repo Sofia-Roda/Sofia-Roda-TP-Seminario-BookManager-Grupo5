@@ -1,3 +1,4 @@
+"""Contiene la interfaz de consola y los menús del sistema Book Manager."""
 import csv
 import datetime
 
@@ -5,6 +6,7 @@ import datetime
 # Lectura y validación de datos
 
 def leer_entero(mensaje: str) -> int:
+    """Solicita al usuario un número entero y valida la entrada."""
     while True:
         try:
             return int(input(mensaje))
@@ -13,6 +15,7 @@ def leer_entero(mensaje: str) -> int:
 
 
 def leer_decimal(mensaje: str) -> float:
+    """Solicita al usuario un número decimal y valida la entrada."""
     while True:
         try:
             return float(input(mensaje))
@@ -21,6 +24,7 @@ def leer_decimal(mensaje: str) -> float:
 
 
 def leer_fecha(mensaje: str) -> datetime.date:
+    """Solicita al usuario una fecha en formato AAAA-MM-DD y valida la entrada."""
     while True:
         fecha = input(mensaje)
         componentes = fecha.split("-")
@@ -41,6 +45,7 @@ def leer_fecha(mensaje: str) -> datetime.date:
 #--------------------------------- CRUD de géneros---------------------------------
 
 def mostrar_generos(genero_service) -> None:
+    """Muestra todos los géneros registrados."""
     print("\n--- LISTADO DE GÉNEROS ---")
 
     generos = genero_service.listar()
@@ -60,6 +65,7 @@ def mostrar_generos(genero_service) -> None:
 
 
 def registrar_genero(genero_service) -> None:
+    """Solicita los datos y registra un nuevo género."""
     print("\n--- NUEVO GÉNERO ---")
 
     try:
@@ -73,6 +79,7 @@ def registrar_genero(genero_service) -> None:
 
 
 def editar_genero(genero_service) -> None:
+    """Solicita los datos y modifica un género existente."""
     print("\n--- MODIFICAR GÉNERO ---")
 
     genero_id = leer_entero("ID del género: ")
@@ -93,6 +100,7 @@ def editar_genero(genero_service) -> None:
 
 
 def borrar_genero(genero_service) -> None:
+    """Solicita un id y elimina el género correspondiente."""
     print("\n--- ELIMINAR GÉNERO ---")
 
     genero_id = leer_entero("ID del género: ")
@@ -107,6 +115,7 @@ def borrar_genero(genero_service) -> None:
 
 
 def gestionar_generos(genero_service) -> None:
+    """Muestra y administra el menú de opciones de géneros."""
     while True:
 
         print("\n----- GÉNEROS -----")
@@ -143,6 +152,8 @@ def gestionar_generos(genero_service) -> None:
 
 
 def mostrar_editoriales(editorial_service) -> None:
+    """Muestra todos las editoriales registradas."""
+    
     print("\n--- LISTADO DE EDITORIALES ---")
 
     editoriales = editorial_service.listar()
@@ -164,6 +175,7 @@ def mostrar_editoriales(editorial_service) -> None:
 
 
 def registrar_editorial(editorial_service) -> None:
+    """Solicita los datos y registra una nueva editorial."""
     print("\n--- NUEVA EDITORIAL ---")
 
     try:
@@ -180,6 +192,7 @@ def registrar_editorial(editorial_service) -> None:
 
 
 def editar_editorial(editorial_service) -> None:
+    """Solicita los datos y modifica una editorial existente."""
     print("\n--- MODIFICAR EDITORIAL ---")
 
     editorial_id = leer_entero("ID de la editorial: ")
@@ -203,6 +216,7 @@ def editar_editorial(editorial_service) -> None:
 
 
 def borrar_editorial(editorial_service) -> None:
+    """Solicita un id y elimina la editorial correspondiente."""
     print("\n--- ELIMINAR EDITORIAL ---")
 
     editorial_id = leer_entero("ID de la editorial: ")
@@ -217,6 +231,7 @@ def borrar_editorial(editorial_service) -> None:
 
 
 def gestionar_editoriales(editorial_service) -> None:
+    """Muestra y administra el menú de opciones de editoriales."""
     while True:
 
         print("\n=== EDITORIALES ===")
@@ -253,6 +268,7 @@ def gestionar_editoriales(editorial_service) -> None:
 
 
 def mostrar_monedas(moneda_service) -> None:
+    """Muestra todos los géneros registrados."""
     print("\n--- LISTADO DE MONEDAS ---")
 
     monedas = moneda_service.listar()
@@ -274,6 +290,7 @@ def mostrar_monedas(moneda_service) -> None:
 
 
 def registrar_moneda(moneda_service) -> None:
+    """Solicita los datos y registra un nueva moneda."""
     print("\n--- NUEVA MONEDA ---")
 
     try:
@@ -288,6 +305,7 @@ def registrar_moneda(moneda_service) -> None:
 
 
 def editar_moneda(moneda_service) -> None:
+    """Solicita los datos y modifica una moneda existente."""
     print("\n--- MODIFICAR MONEDA ---")
 
     moneda_id = leer_entero("ID de la moneda: ")
@@ -309,6 +327,7 @@ def editar_moneda(moneda_service) -> None:
 
 
 def borrar_moneda(moneda_service) -> None:
+    """Solicita un id y elimina la moneda correspondiente."""
     print("\n--- ELIMINAR MONEDA ---")
 
     moneda_id = leer_entero("ID de la moneda: ")
@@ -323,6 +342,7 @@ def borrar_moneda(moneda_service) -> None:
 
 
 def gestionar_monedas(moneda_service) -> None:
+    """Muestra y administra el menú de opciones de monedas."""
     while True:
 
         print("\n=== MONEDAS ===")
@@ -359,6 +379,7 @@ def gestionar_monedas(moneda_service) -> None:
 
 
 def mostrar_tipos_cotizacion(tipo_service) -> None:
+    """Muestra todos los tipos de cotización registrados."""
     print("\n--- LISTADO DE TIPOS DE COTIZACIÓN ---")
 
     tipos = tipo_service.listar()
@@ -378,6 +399,7 @@ def mostrar_tipos_cotizacion(tipo_service) -> None:
 
 
 def registrar_tipo_cotizacion(tipo_service) -> None:
+    """Solicita los datos y registra un nuevo tipo de cotización."""
     print("\n--- NUEVO TIPO DE COTIZACIÓN ---")
 
     try:
@@ -391,6 +413,7 @@ def registrar_tipo_cotizacion(tipo_service) -> None:
 
 
 def editar_tipo_cotizacion(tipo_service) -> None:
+    """Solicita los datos y modifica un tipo de cotización existente."""
     print("\n--- MODIFICAR TIPO DE COTIZACIÓN ---")
 
     tipo_id = leer_entero("ID del tipo: ")
@@ -411,6 +434,7 @@ def editar_tipo_cotizacion(tipo_service) -> None:
 
 
 def borrar_tipo_cotizacion(tipo_service) -> None:
+    """Solicita un id y elimina el tipo de cotización correspondiente."""
     print("\n--- ELIMINAR TIPO DE COTIZACIÓN ---")
 
     tipo_id = leer_entero("ID del tipo: ")
@@ -425,6 +449,7 @@ def borrar_tipo_cotizacion(tipo_service) -> None:
 
 
 def gestionar_tipos_cotizacion(tipo_service) -> None:
+    """Muestra y administra el menú de opciones de tipo de cotización."""
     while True:
 
         print("\n=== TIPOS DE COTIZACIÓN ===")
@@ -461,6 +486,7 @@ def gestionar_tipos_cotizacion(tipo_service) -> None:
 
 
 def mostrar_libros(libro_service) -> None:
+    """Muestra todos los libros registrados."""
     print("\n--- LISTADO DE LIBROS ---")
 
     libros = libro_service.listar()
@@ -484,6 +510,7 @@ def mostrar_libros(libro_service) -> None:
 
 
 def registrar_libro(libro_service) -> None:
+    """Solicita los datos y registra un nuevo libro."""
     print("\n--- NUEVO LIBRO ---")
 
     try:
@@ -511,6 +538,7 @@ def registrar_libro(libro_service) -> None:
 
 
 def editar_libro(libro_service) -> None:
+    """Solicita los datos y modifica un libro existente."""
     print("\n--- MODIFICAR LIBRO ---")
 
     libro_id = leer_entero("ID del libro: ")
@@ -545,6 +573,7 @@ def editar_libro(libro_service) -> None:
 
 
 def borrar_libro(libro_service) -> None:
+    """Solicita un id y elimina el libro correspondiente."""
     print("\n--- ELIMINAR LIBRO ---")
 
     libro_id = leer_entero("ID del libro: ")
@@ -559,6 +588,7 @@ def borrar_libro(libro_service) -> None:
 
 
 def gestionar_libros(libro_service) -> None:
+    """Muestra y administra el menú de opciones de libros."""
     while True:
 
         print("\n=== LIBROS ===")
@@ -595,6 +625,7 @@ def gestionar_libros(libro_service) -> None:
 
 
 def mostrar_precios(precio_service) -> None:
+    """Muestra todos los precios registrados."""
     print("\n--- LISTADO DE PRECIOS ---")
 
     precios = precio_service.listar()
@@ -615,6 +646,7 @@ def mostrar_precios(precio_service) -> None:
 
 
 def registrar_precio(precio_service) -> None:
+    """Solicita los datos y registra un nuevo precio."""
     print("\n--- NUEVO PRECIO ---")
 
     try:
@@ -629,6 +661,7 @@ def registrar_precio(precio_service) -> None:
 
 
 def editar_precio(precio_service) -> None:
+    """Solicita los datos y modifica un precio existente."""
     print("\n--- MODIFICAR PRECIO ---")
 
     precio_id = leer_entero("ID del precio: ")
@@ -649,6 +682,7 @@ def editar_precio(precio_service) -> None:
 
 
 def borrar_precio(precio_service) -> None:
+    """Solicita un id y elimina el precio correspondiente."""
     print("\n--- ELIMINAR PRECIO ---")
 
     precio_id = leer_entero("ID del precio: ")
@@ -664,6 +698,7 @@ def mostrar_precios_bimonetarios(
     cotizacion_service,
     tipo_service,
 ) -> None:
+    """Muestra los precios de los libros en ARS y su equivalente en USD."""
     print("\n--- LISTA DE PRECIOS BIMONETARIA ---")
 
     tipos = tipo_service.listar()
@@ -733,6 +768,7 @@ def mostrar_precios_bimonetarios(
             )
 
 def exportar_precios_csv(precio_service) -> None:
+    """Exporta los precios registrados a un archivo CSV."""
     print("\n--- EXPORTAR PRECIOS A CSV ---")
 
     precios = precio_service.listar()
@@ -782,6 +818,7 @@ def exportar_precios_csv(precio_service) -> None:
     )
 
 def gestionar_precios(precio_service,cotizacion_service,tipo_service,) -> None:
+    """Muestra y administra el menú de opciones de precios."""
     while True:
 
         print("\n=== PRECIOS ===")
@@ -826,6 +863,7 @@ def gestionar_precios(precio_service,cotizacion_service,tipo_service,) -> None:
 
 
 def mostrar_stock(stock_service, libro_service) -> None:
+    """Muestra todos los stocks registrados."""
     print("\n--- LISTADO DE STOCK ---")
 
     hay_registros = False
@@ -857,6 +895,7 @@ def mostrar_stock(stock_service, libro_service) -> None:
 
 
 def registrar_stock(stock_service) -> None:
+    """Solicita los datos y registra un nuevo stock."""
     print("\n--- NUEVO STOCK ---")
 
     estados = ", ".join(sorted(stock_service.ESTADOS_VALIDOS))
@@ -877,6 +916,7 @@ def registrar_stock(stock_service) -> None:
 
 
 def editar_stock(stock_service) -> None:
+    """Solicita los datos y modifica un stock existente."""
     print("\n--- MODIFICAR STOCK ---")
 
     libro_id = leer_entero("ID del libro: ")
@@ -903,6 +943,7 @@ def editar_stock(stock_service) -> None:
 
 
 def borrar_stock(stock_service) -> None:
+    """Solicita un id y elimina el stock correspondiente."""
     print("\n--- ELIMINAR STOCK ---")
 
     libro_id = leer_entero("ID del libro: ")
@@ -914,6 +955,7 @@ def borrar_stock(stock_service) -> None:
 
 
 def gestionar_stock(stock_service, libro_service) -> None:
+    """Muestra y administra el menú de opciones de stock."""
     while True:
 
         print("\n=== STOCK ===")
@@ -950,6 +992,7 @@ def gestionar_stock(stock_service, libro_service) -> None:
 
 
 def mostrar_cotizaciones(cotizacion_service, tipo_service) -> None:
+    """Muestra todas las cotizaciones registradas."""
     print("\n--- LISTADO DE COTIZACIONES ---")
 
     hay_registros = False
@@ -976,6 +1019,7 @@ def mostrar_cotizaciones(cotizacion_service, tipo_service) -> None:
 
 
 def registrar_cotizacion(cotizacion_service) -> None:
+    """Solicita los datos y registra una nueva cotización."""
     print("\n--- NUEVA COTIZACIÓN ---")
 
     try:
@@ -990,6 +1034,7 @@ def registrar_cotizacion(cotizacion_service) -> None:
 
 
 def editar_cotizacion(cotizacion_service) -> None:
+    """Solicita los datos y modifica una cotización existente."""
     print("\n--- MODIFICAR COTIZACIÓN ---")
 
     tipo_id = leer_entero("ID del tipo de cotización: ")
@@ -1011,6 +1056,7 @@ def editar_cotizacion(cotizacion_service) -> None:
 
 
 def borrar_cotizacion(cotizacion_service) -> None:
+    """Solicita un id y elimina la cotización correspondiente."""
     print("\n--- ELIMINAR COTIZACIÓN ---")
 
     tipo_id = leer_entero("ID del tipo de cotización: ")
@@ -1022,6 +1068,7 @@ def borrar_cotizacion(cotizacion_service) -> None:
         print("No se encontró la cotización.")
 
 def obtener_cotizaciones_api(cotizacion_service) -> None:
+    """Obtiene y muestra las cotizaciones consultadas desde la API."""
     print("\n--- OBTENER COTIZACIONES POR API ---")
 
     try:
@@ -1046,6 +1093,7 @@ def obtener_cotizaciones_api(cotizacion_service) -> None:
         print("Error:", exc)
 
 def gestionar_cotizaciones(cotizacion_service, tipo_service) -> None:
+    """Muestra y administra el menú de opciones de cotizaciones."""
     while True:
 
         print("\n=== COTIZACIONES DEL DÓLAR ===")
@@ -1085,6 +1133,7 @@ def gestionar_cotizaciones(cotizacion_service, tipo_service) -> None:
 # Menú principal
 
 def iniciar_menu(servicios: dict) -> None:
+    """Muestra y administra el menú principal del sistema."""
 
     while True:
 
