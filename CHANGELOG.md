@@ -2,6 +2,12 @@
 
 ## Sprint 3
 
+[Ejercicio 2]
+- Se creó la función cargar_datos_desde_sql(sesion, ruta_archivo) en preload_data/preload_data.py para cargar los datos desde un archivo .sql.
+- La función ignora líneas vacías y comentarios, admite sentencias de una o más líneas terminadas en ";" y devuelve la cantidad de sentencias ejecutadas.
+- Se lanza un FileNotFoundError si el archivo .sql no existe.
+- Se adaptó cargar_datos_iniciales para usar la nueva función con cada archivo de migrations/sql, manteniendo la carga en una única transacción.
+
 [Ejercicio 1]
 - Se creó la rama Sprint_3 a partir de Sprint_2.
 - Se generó la carpeta scraper con la estructura del proyecto Scrapy mediante scrapy startproject (scrapy.cfg, items.py, middlewares.py, pipelines.py, settings.py y spiders/).
