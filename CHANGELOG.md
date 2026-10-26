@@ -2,6 +2,16 @@
 
 ## Sprint 3
 
+[Ejercicio 3]
+- Se implementó CuspideSpider para buscar en Cúspide los libros pertenecientes al catálogo de Book Manager.
+- Se limitó el procesamiento a los primeros 10 resultados obtenidos para cada búsqueda por título.
+- Se implementaron Items y Loaders para obtener y limpiar el título, precio, URL de la imagen, formas de pago, descripción y URL del producto.
+- Se implementó un Pipeline para validar los datos extraídos y evitar resultados duplicados.
+- Se normalizaron y compararon los títulos para evitar incorporar libros que no correspondan exactamente al catálogo.
+- Se utilizó el SKU informado por Cúspide para identificar la imagen correspondiente a cada libro.
+- Se configuró Scrapy con demora entre solicitudes, límite de solicitudes simultáneas por dominio, pipeline y codificación UTF-8.
+- Se verificó el scraper con los títulos del catálogo, conservando únicamente las coincidencias válidas encontradas en Cúspide.
+
 [Ejercicio 2]
 - Se creó la función cargar_datos_desde_sql(sesion, ruta_archivo) en preload_data/preload_data.py para cargar los datos desde un archivo .sql.
 - La función ignora líneas vacías y comentarios, admite sentencias de una o más líneas terminadas en ";" y devuelve la cantidad de sentencias ejecutadas.
