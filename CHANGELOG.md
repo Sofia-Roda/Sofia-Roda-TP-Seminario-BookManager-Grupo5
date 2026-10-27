@@ -2,6 +2,18 @@
 
 ## Sprint 3
 
+[Ejercicio 5]
+- Se creó reporte_excel.py con la función generar_reporte_excel, que usa
+  pandas para generar un archivo Excel en reportes/reporte_precios_<fecha>.xlsx
+  con las columnas Libro, Precio interno, Precio web, Diferencia y Fecha de
+  extracción.
+- Se modificó comparar_precios_y_generar_alertas para que, además de las
+  alertas, devuelva todas las comparaciones realizadas con su fecha de
+  extracción, para que el reporte incluya todos los libros encontrados.
+- En el reporte la diferencia se calcula como precio web - precio interno:
+  es positiva si Cúspide vende más caro.
+- Se agregaron pandas y openpyxl a requirements.txt.
+
 [Ejercicio 4]
 - Se creo comparador.py con dos funciones: obtener_precios_web, que ejecuta
   el spider CuspideSpider con todos los titulos del catalogo y devuelve
