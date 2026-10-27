@@ -2,6 +2,20 @@
 
 ## Sprint 3
 
+[Ejercicio 4]
+- Se creo comparador.py con dos funciones: obtener_precios_web, que ejecuta
+  el spider CuspideSpider con todos los titulos del catalogo y devuelve
+  los resultados encontrados, y comparar_precios_y_generar_alertas, que
+  compara el precio interno (en pesos argentinos) de cada libro con el
+  precio obtenido en Cuspide.
+- Si Cuspide devuelve mas de un resultado para el mismo titulo (por
+  ejemplo, ediciones de distintos autores), se tratan por separado: se
+  genera una alerta por cada coincidencia que supere la diferencia minima.
+- La diferencia minima para generar una alerta se recibe como parametro
+  de la funcion, para que la pida el usuario antes de cada ejecucion.
+- Se genera un archivo CSV en reportes/alertas_<fecha>.csv con libro,
+  precio interno, precio web, diferencia y url de cada alerta.
+
 [Ejercicio 3]
 - Se implementó CuspideSpider para buscar en Cúspide los libros pertenecientes al catálogo de Book Manager.
 - Se limitó el procesamiento a los primeros 10 resultados obtenidos para cada búsqueda por título.
