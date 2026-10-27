@@ -62,7 +62,7 @@ def comparar_precios_y_generar_alertas(
     libro_service: LibroService,
     precio_service: PrecioService,
     diferencia_minima: float,
-) -> Path:
+) -> tuple[Path, List[dict]]:
     """Compara el precio interno de cada libro con el precio web y genera alertas.
 
     Para cada libro del catálogo con precio en pesos argentinos, busca su
@@ -77,7 +77,11 @@ def comparar_precios_y_generar_alertas(
         diferencia_minima (float): Diferencia mínima para generar una alerta.
 
     Returns:
-        Path: Ruta del archivo CSV de alertas generado.
+        tuple[Path, List[dict]]: La ruta del CSV generado y la lista de
+            alertas (cada una con libro_id, titulo, precio_interno,
+            precio_web, diferencia y url), para que otras partes del
+            sistema (por ejemplo, el reporte en Excel) puedan reusarlas
+            sin tener que volver a leer el archivo.
 
     Raises:
         ValueError: Si `diferencia_minima` es negativa.
@@ -104,52 +108,44 @@ def comparar_precios_y_generar_alertas(
             resultado
         )
 
+    alertas: List[dict] = []
+
+    for libro in libros_con_precio:
+        coincidencias = resultados_por_titulo.get(libro.titulo, [])
+
+        if len(coincidencias) > 1:
+            print(
+                f"'{libro.titulo}' tiene {len(coincidencias)} coincidencias "
+                "en Cúspide, se muestran todas por separado."
+            )
+
+        precio_interno = precios_internos[libro.id]
+
+        for resultado in coincidencias:
+            precio_web = resultado["precio"]
+            diferencia = abs(precio_interno - precio_web)
+
+            if diferencia >= diferencia_minima:
+                alertas.append(
+                    {
+                        "libro_id": libro.id,
+                        "titulo": libro.titulo,
+                        "precio_interno": precio_interno,
+                        "precio_web": precio_web,
+                        "diferencia": diferencia,
+                        "url": resultado["url"],
+                    }
+                )
+
     RUTA_REPORTES.mkdir(parents=True, exist_ok=True)
     ruta_csv = RUTA_REPORTES / f"alertas_{datetime.date.today().isoformat()}.csv"
 
-    cantidad_alertas = 0
-
     with open(ruta_csv, "w", encoding="utf-8", newline="") as archivo_csv:
-        escritor = csv.writer(archivo_csv)
-        escritor.writerow(
-            [
-                "libro_id",
-                "titulo",
-                "precio_interno",
-                "precio_web",
-                "diferencia",
-                "url",
-            ]
-        )
+        columnas = ["libro_id", "titulo", "precio_interno", "precio_web", "diferencia", "url"]
+        escritor = csv.DictWriter(archivo_csv, fieldnames=columnas)
+        escritor.writeheader()
+        escritor.writerows(alertas)
 
-        for libro in libros_con_precio:
-            coincidencias = resultados_por_titulo.get(libro.titulo, [])
+    print(f"Se generaron {len(alertas)} alerta(s) en {ruta_csv}")
 
-            if len(coincidencias) > 1:
-                print(
-                    f"'{libro.titulo}' tiene {len(coincidencias)} coincidencias "
-                    "en Cúspide, se muestran todas por separado."
-                )
-
-            precio_interno = precios_internos[libro.id]
-
-            for resultado in coincidencias:
-                precio_web = resultado["precio"]
-                diferencia = abs(precio_interno - precio_web)
-
-                if diferencia >= diferencia_minima:
-                    escritor.writerow(
-                        [
-                            libro.id,
-                            libro.titulo,
-                            precio_interno,
-                            precio_web,
-                            diferencia,
-                            resultado["url"],
-                        ]
-                    )
-                    cantidad_alertas += 1
-
-    print(f"Se generaron {cantidad_alertas} alerta(s) en {ruta_csv}")
-
-    return ruta_csv
+    return ruta_csv, alertas
