@@ -62,7 +62,7 @@ def comparar_precios_y_generar_alertas(
     libro_service: LibroService,
     precio_service: PrecioService,
     diferencia_minima: float,
-) -> tuple[Path, List[dict]]:
+) -> tuple[Path, List[dict], List[dict]]:
     """Compara el precio interno de cada libro con el precio web y genera alertas.
 
     Para cada libro del catálogo con precio en pesos argentinos, busca su
@@ -77,11 +77,16 @@ def comparar_precios_y_generar_alertas(
         diferencia_minima (float): Diferencia mínima para generar una alerta.
 
     Returns:
-        tuple[Path, List[dict]]: La ruta del CSV generado y la lista de
-            alertas (cada una con libro_id, titulo, precio_interno,
-            precio_web, diferencia y url), para que otras partes del
-            sistema (por ejemplo, el reporte en Excel) puedan reusarlas
-            sin tener que volver a leer el archivo.
+        tuple[Path, List[dict], List[dict]]: La ruta del CSV generado, la
+            lista de alertas (cada una con libro_id, titulo,
+            precio_interno, precio_web, diferencia y url) y la lista de
+            todas las comparaciones realizadas, superen o no la diferencia
+            mínima (cada una con libro_id, titulo, precio_interno,
+            precio_web, diferencia y fecha_extraccion), para que otras
+            partes del sistema (por ejemplo, el reporte en Excel) puedan
+            reusarlas sin tener que volver a leer el archivo. En las
+            comparaciones la diferencia es precio_web - precio_interno:
+            es positiva si Cúspide vende más caro.
 
     Raises:
         ValueError: Si `diferencia_minima` es negativa.
@@ -101,6 +106,7 @@ def comparar_precios_y_generar_alertas(
     titulos = [libro.titulo for libro in libros_con_precio]
 
     resultados_web = obtener_precios_web(titulos)
+    fecha_extraccion = datetime.datetime.now().replace(microsecond=0)
 
     resultados_por_titulo: Dict[str, List[dict]] = {}
     for resultado in resultados_web:
@@ -109,6 +115,7 @@ def comparar_precios_y_generar_alertas(
         )
 
     alertas: List[dict] = []
+    comparaciones: List[dict] = []
 
     for libro in libros_con_precio:
         coincidencias = resultados_por_titulo.get(libro.titulo, [])
@@ -124,6 +131,17 @@ def comparar_precios_y_generar_alertas(
         for resultado in coincidencias:
             precio_web = resultado["precio"]
             diferencia = abs(precio_interno - precio_web)
+
+            comparaciones.append(
+                {
+                    "libro_id": libro.id,
+                    "titulo": libro.titulo,
+                    "precio_interno": precio_interno,
+                    "precio_web": precio_web,
+                    "diferencia": precio_web - precio_interno,
+                    "fecha_extraccion": fecha_extraccion,
+                }
+            )
 
             if diferencia >= diferencia_minima:
                 alertas.append(
@@ -148,4 +166,4 @@ def comparar_precios_y_generar_alertas(
 
     print(f"Se generaron {len(alertas)} alerta(s) en {ruta_csv}")
 
-    return ruta_csv, alertas
+    return ruta_csv, alertas, comparaciones
