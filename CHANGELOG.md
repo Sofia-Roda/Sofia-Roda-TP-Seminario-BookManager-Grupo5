@@ -2,6 +2,15 @@
 
 ## Sprint 3
 
+[Ejercicio 7]
+- Se agregaron al menú principal las opciones Ejecutar scraping, Generar reporte y Ver historial de auditoría.
+- La opción Ejecutar scraping solicita la diferencia mínima, compara los precios internos con Cúspide y genera el archivo CSV de alertas.
+- Las comparaciones obtenidas en el scraping se conservan para generar posteriormente el reporte Excel sin repetir la extracción.
+- La opción Generar reporte utiliza las últimas comparaciones realizadas y genera el archivo Excel con los precios internos y web.
+- Se agregó la visualización del historial de auditoría con acción, fecha y detalles.
+- Se registran en auditoría las ejecuciones de scraping y la generación de reportes, incluyendo operaciones exitosas y errores.
+- Se verificó el funcionamiento completo de las tres opciones contra la base de datos.
+
 [Ejercicio 6]
 - Se creó la entidad y el modelo Auditoria para registrar las operaciones realizadas en el sistema.
 - Se creó RepositorioAuditoria para almacenar y consultar el historial de auditorías en la base de datos.

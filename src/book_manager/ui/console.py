@@ -2,6 +2,10 @@
 import csv
 import datetime
 
+from book_manager.scraper.comparador import (
+    comparar_precios_y_generar_alertas,
+)
+from book_manager.scraper.reporte_excel import generar_reporte_excel
 
 # Lectura y validación de datos
 
@@ -1129,12 +1133,121 @@ def gestionar_cotizaciones(cotizacion_service, tipo_service) -> None:
             case _:
                 print("Opción inválida.")
 
+# ----------------------- Scraping, reportes y auditoría -----------------------
+
+
+def ejecutar_scraping(
+    libro_service,
+    precio_service,
+    auditoria_service,
+) -> list[dict]:
+    """Ejecuta el scraping y compara los precios con el catálogo interno."""
+    print("\n--- EJECUTAR SCRAPING ---")
+
+    diferencia_minima = leer_decimal(
+        "Ingrese la diferencia mínima para generar una alerta: "
+    )
+
+    try:
+        ruta_csv, alertas, comparaciones = (
+            comparar_precios_y_generar_alertas(
+                libro_service,
+                precio_service,
+                diferencia_minima,
+            )
+        )
+
+        auditoria_service.registrar(
+            accion="EJECUTAR_SCRAPING",
+            detalles=(
+                "Scraping ejecutado correctamente. "
+                f"Comparaciones: {len(comparaciones)}. "
+                f"Alertas: {len(alertas)}. "
+                f"Archivo CSV: {ruta_csv}"
+            ),
+        )
+
+        print("\nScraping finalizado correctamente.")
+        print("Comparaciones realizadas:", len(comparaciones))
+        print("Alertas generadas:", len(alertas))
+        print("Archivo CSV:", ruta_csv)
+
+        return comparaciones
+
+    except (ValueError, RuntimeError) as exc:
+        auditoria_service.registrar(
+            accion="EJECUTAR_SCRAPING",
+            detalles=(
+                "La ejecución del scraping finalizó con error: "
+                f"{type(exc).__name__}: {exc}"
+            ),
+        )
+
+        print("Error:", exc)
+        return []
+
+def generar_reporte(
+    comparaciones: list[dict],
+    auditoria_service,
+) -> None:
+    """Genera el reporte Excel con las últimas comparaciones realizadas."""
+    print("\n--- GENERAR REPORTE ---")
+
+    try:
+        ruta_excel = generar_reporte_excel(comparaciones)
+
+        auditoria_service.registrar(
+            accion="GENERAR_REPORTE",
+            detalles=(
+                "Reporte generado correctamente. "
+                f"Comparaciones incluidas: {len(comparaciones)}. "
+                f"Archivo Excel: {ruta_excel}"
+            ),
+        )
+
+        print("\nReporte generado correctamente.")
+        print("Archivo Excel:", ruta_excel)
+
+    except ValueError as exc:
+        auditoria_service.registrar(
+            accion="GENERAR_REPORTE",
+            detalles=(
+                "La generación del reporte finalizó con error: "
+                f"{type(exc).__name__}: {exc}"
+            ),
+        )
+
+        print("Error:", exc)
+
+def mostrar_historial_auditoria(auditoria_service) -> None:
+    """Muestra el historial de auditorías registradas en el sistema."""
+    print("\n--- HISTORIAL DE AUDITORÍA ---")
+
+    auditorias = auditoria_service.listar()
+
+    if len(auditorias) == 0:
+        print("No hay auditorías registradas.")
+        return
+
+    for auditoria in auditorias:
+        print(
+            "\nID:",
+            auditoria.id,
+            "\nAcción:",
+            auditoria.accion,
+            "\nFecha:",
+            auditoria.fecha,
+            "\nDetalles:",
+            auditoria.detalles,
+        )
 
 # Menú principal
 
 def iniciar_menu(servicios: dict) -> None:
     """Muestra y administra el menú principal del sistema."""
 
+    comparaciones = []
+    
     while True:
 
         print("\n****************************** BOOK MANAGER ******************************")
@@ -1147,6 +1260,9 @@ def iniciar_menu(servicios: dict) -> None:
         print("6. Precios")
         print("7. Stock")
         print("8. Cotizaciones del dólar")
+        print("9. Ejecutar scraping")
+        print("10. Generar reporte")
+        print("11. Ver historial de auditoría")
         print("0. Salir")
 
         seleccion = input(
@@ -1180,6 +1296,24 @@ def iniciar_menu(servicios: dict) -> None:
                 gestionar_cotizaciones(
                     servicios["cotizaciones"],
                     servicios["tipos_cotizacion"],
+                )
+
+            case "9":
+                comparaciones = ejecutar_scraping(
+                    servicios["libros"],
+                    servicios["precios"],
+                    servicios["auditorias"],
+                )
+
+            case "10":
+                generar_reporte(
+                    comparaciones,
+                    servicios["auditorias"],
+                )
+
+            case "11":
+                mostrar_historial_auditoria(
+                    servicios["auditorias"],
                 )
 
             case "0":
