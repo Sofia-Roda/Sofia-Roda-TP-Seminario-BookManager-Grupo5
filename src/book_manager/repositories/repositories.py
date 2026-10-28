@@ -8,6 +8,7 @@ from sqlalchemy import select
 
 from book_manager.database.connection import ConexionDB
 from book_manager.entities.entities import (
+    Auditoria,
     CotizacionDolar,
     Editorial,
     EntidadBase,
@@ -19,6 +20,7 @@ from book_manager.entities.entities import (
     TipoCotizacion,
 )
 from book_manager.models.models import (
+    AuditoriaModel,
     CotizacionDolarModel,
     EditorialModel,
     GeneroModel,
@@ -799,3 +801,47 @@ class RepositorioCotizacionDolar(IRepositorioCotizacionDolar):
                 return False
             sesion.delete(modelo)
         return True
+
+
+class RepositorioAuditoria:
+    """Repositorio para registrar y consultar las auditorías del sistema."""
+
+    def __init__(self, conexion: ConexionDB) -> None:
+        self._conexion = conexion
+
+    def crear(self, auditoria: Auditoria) -> Auditoria:
+        """Guarda un nuevo registro de auditoría en la base de datos."""
+        with self._conexion.transaccion() as sesion:
+            modelo = AuditoriaModel(
+                id=auditoria.id,
+                accion=auditoria.accion,
+                fecha=auditoria.fecha,
+                detalles=auditoria.detalles,
+            )
+            sesion.add(modelo)
+
+        return auditoria
+
+    def leer_todos(self) -> List[Auditoria]:
+        """Devuelve todas las auditorías ordenadas desde la más reciente."""
+        with self._conexion.transaccion() as sesion:
+            modelos = (
+                sesion.execute(
+                    select(AuditoriaModel).order_by(
+                        AuditoriaModel.fecha.desc(),
+                        AuditoriaModel.id.desc(),
+                    )
+                )
+                .scalars()
+                .all()
+            )
+
+            return [
+                Auditoria(
+                    id=modelo.id,
+                    accion=modelo.accion,
+                    fecha=modelo.fecha,
+                    detalles=modelo.detalles,
+                )
+                for modelo in modelos
+            ]

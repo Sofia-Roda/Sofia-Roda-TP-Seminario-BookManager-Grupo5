@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from book_manager.database.connection import ConexionDB
 from book_manager.models.models import Base, GeneroModel
 from book_manager.repositories.repositories import (
+    RepositorioAuditoria,
     RepositorioCotizacionDolar,
     RepositorioEditorial,
     RepositorioGenero,
@@ -54,7 +55,11 @@ def crear_repositorios(conexion: ConexionDB) -> Dict[str, object]:
         "libros": libros,
         "precios": RepositorioPrecio(conexion, libros, monedas),
         "stock": RepositorioStock(conexion, libros),
-        "cotizaciones": RepositorioCotizacionDolar(conexion, tipos_cotizacion),
+        "cotizaciones": RepositorioCotizacionDolar(
+            conexion,
+            tipos_cotizacion,
+        ),
+        "auditorias": RepositorioAuditoria(conexion),
     }
 
 

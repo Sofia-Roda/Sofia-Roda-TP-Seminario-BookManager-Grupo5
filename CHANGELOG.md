@@ -2,6 +2,16 @@
 
 ## Sprint 3
 
+[Ejercicio 6]
+- Se creó la entidad y el modelo Auditoria para registrar las operaciones realizadas en el sistema.
+- Se creó RepositorioAuditoria para almacenar y consultar el historial de auditorías en la base de datos.
+- Se creó AuditoriaService para registrar y listar las auditorías.
+- Se implementó el decorador @auditar para registrar automáticamente la acción, fecha y detalles de cada operación.
+- Se aplicó el decorador a las operaciones públicas de los servicios del sistema.
+- Se registran tanto las operaciones exitosas como las que finalizan con error.
+- Se integró el servicio de auditoría con los servicios existentes mediante inyección de dependencias.
+- Se verificó el funcionamiento de la auditoría contra la base de datos Supabase.
+
 [Ejercicio 5]
 - Se creó reporte_excel.py con la función generar_reporte_excel, que usa
   pandas para generar un archivo Excel en reportes/reporte_precios_<fecha>.xlsx

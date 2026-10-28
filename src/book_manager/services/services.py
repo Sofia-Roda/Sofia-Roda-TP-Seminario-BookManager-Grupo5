@@ -6,6 +6,7 @@ from typing import List, Optional
 
 import requests
 from dotenv import load_dotenv
+from book_manager.auditoria import AuditoriaService, auditar
 
 from book_manager.entities.entities import (
     CotizacionDolar,
@@ -41,11 +42,13 @@ class GeneroService:
     """Lógica de negocio para la gestión de géneros literarios."""
 
     def __init__(
-        self, repositorio: RepositorioGenero, repositorio_libros: RepositorioLibro
+        self, repositorio: RepositorioGenero, repositorio_libros: RepositorioLibro, auditoria_service: AuditoriaService,
     ) -> None:
         self._repositorio = repositorio
         self._repositorio_libros = repositorio_libros
+        self._auditoria_service = auditoria_service
 
+    @auditar("CREAR_GENERO")
     def crear(self, nombre: str, descripcion: Optional[str] = None) -> Genero:
         """Valida los datos y crea un nuevo género.
 
@@ -60,14 +63,17 @@ class GeneroService:
         )
         return self._repositorio.crear(genero)
 
+    @auditar("CONSULTAR_GENERO")
     def obtener_por_id(self, id: int) -> Optional[Genero]:
         """Obtiene un género por su id, o None si no existe."""
         return self._repositorio.leer_por_id(id)
 
+    @auditar("LISTAR_GENEROS")
     def listar(self) -> List[Genero]:
         """Devuelve todos los géneros registrados."""
         return self._repositorio.leer_todos()
 
+    @auditar("ACTUALIZAR_GENERO")
     def actualizar(
         self, id: int, nombre: Optional[str] = None, descripcion: Optional[str] = None
     ) -> Genero:
@@ -87,6 +93,7 @@ class GeneroService:
             genero.descripcion = descripcion
         return self._repositorio.actualizar(genero)
 
+    @auditar("ELIMINAR_GENERO")
     def eliminar(self, id: int) -> bool:
         """Elimina un género por su id. Devuelve True si existía.
 
@@ -115,11 +122,13 @@ class EditorialService:
     """Lógica de negocio para la gestión de editoriales."""
 
     def __init__(
-        self, repositorio: RepositorioEditorial, repositorio_libros: RepositorioLibro
+        self, repositorio: RepositorioEditorial, repositorio_libros: RepositorioLibro, auditoria_service: AuditoriaService,
     ) -> None:
         self._repositorio = repositorio
         self._repositorio_libros = repositorio_libros
+        self._auditoria_service = auditoria_service
 
+    @auditar("CREAR_EDITORIAL")
     def crear(
         self, nombre: str, cuit: str, email: str, telefono: str, pais: str
     ) -> Editorial:
@@ -141,14 +150,17 @@ class EditorialService:
         )
         return self._repositorio.crear(editorial)
 
+    @auditar("CONSULTAR_EDITORIAL")
     def obtener_por_id(self, id: int) -> Optional[Editorial]:
         """Obtiene una editorial por su id, o None si no existe."""
         return self._repositorio.leer_por_id(id)
 
+    @auditar("LISTAR_EDITORIALES")
     def listar(self) -> List[Editorial]:
         """Devuelve todas las editoriales registradas."""
         return self._repositorio.leer_todos()
 
+    @auditar("ACTUALIZAR_EDITORIAL")
     def actualizar(
         self,
         id: int,
@@ -182,6 +194,7 @@ class EditorialService:
             editorial.pais = pais
         return self._repositorio.actualizar(editorial)
 
+    @auditar("ELIMINAR_EDITORIAL")
     def eliminar(self, id: int) -> bool:
         """Elimina una editorial por su id. Devuelve True si existía.
 
@@ -224,11 +237,13 @@ class MonedaService:
     """Lógica de negocio para la gestión de monedas."""
 
     def __init__(
-        self, repositorio: RepositorioMoneda, repositorio_precios: RepositorioPrecio
+        self, repositorio: RepositorioMoneda, repositorio_precios: RepositorioPrecio, auditoria_service: AuditoriaService,
     ) -> None:
         self._repositorio = repositorio
         self._repositorio_precios = repositorio_precios
+        self._auditoria_service = auditoria_service
 
+    @auditar("CREAR_MONEDA")
     def crear(self, nombre: str, simbolo: str, codigo: str) -> Moneda:
         """Valida los datos y crea una nueva moneda.
 
@@ -246,14 +261,17 @@ class MonedaService:
         )
         return self._repositorio.crear(moneda)
 
+    @auditar("CONSULTAR_MONEDA")
     def obtener_por_id(self, id: int) -> Optional[Moneda]:
         """Obtiene una moneda por su id, o None si no existe."""
         return self._repositorio.leer_por_id(id)
 
+    @auditar("LISTAR_MONEDAS")
     def listar(self) -> List[Moneda]:
         """Devuelve todas las monedas registradas."""
         return self._repositorio.leer_todos()
 
+    @auditar("ACTUALIZAR_MONEDA")
     def actualizar(
         self,
         id: int,
@@ -279,6 +297,7 @@ class MonedaService:
             moneda.codigo = self._validar_codigo(codigo)
         return self._repositorio.actualizar(moneda)
 
+    @auditar("ELIMINAR_MONEDA")
     def eliminar(self, id: int) -> bool:
         """Elimina una moneda por su id. Devuelve True si existía.
 
@@ -318,10 +337,13 @@ class TipoCotizacionService:
         self,
         repositorio: RepositorioTipoCotizacion,
         repositorio_cotizaciones: RepositorioCotizacionDolar,
+        auditoria_service: AuditoriaService,
     ) -> None:
         self._repositorio = repositorio
         self._repositorio_cotizaciones = repositorio_cotizaciones
+        self._auditoria_service = auditoria_service
 
+    @auditar("CREAR_TIPO_COTIZACION")
     def crear(self, nombre: str, descripcion: Optional[str] = None) -> TipoCotizacion:
         """Valida los datos y crea un nuevo tipo de cotización.
 
@@ -336,14 +358,17 @@ class TipoCotizacionService:
         )
         return self._repositorio.crear(tipo)
 
+    @auditar("CONSULTAR_TIPO_COTIZACION")
     def obtener_por_id(self, id: int) -> Optional[TipoCotizacion]:
         """Obtiene un tipo de cotización por su id, o None si no existe."""
         return self._repositorio.leer_por_id(id)
 
+    @auditar("LISTAR_TIPOS_COTIZACION")
     def listar(self) -> List[TipoCotizacion]:
         """Devuelve todos los tipos de cotización registrados."""
         return self._repositorio.leer_todos()
 
+    @auditar("ACTUALIZAR_TIPO_COTIZACION")
     def actualizar(
         self, id: int, nombre: Optional[str] = None, descripcion: Optional[str] = None
     ) -> TipoCotizacion:
@@ -362,6 +387,7 @@ class TipoCotizacionService:
             tipo.descripcion = descripcion
         return self._repositorio.actualizar(tipo)
 
+    @auditar("ELIMINAR_TIPO_COTIZACION")
     def eliminar(self, id: int) -> bool:
         """Elimina un tipo de cotización por su id. Devuelve True si existía.
 
@@ -393,13 +419,16 @@ class LibroService:
         editorial_service: EditorialService,
         repositorio_precios: RepositorioPrecio,
         repositorio_stock: RepositorioStock,
+        auditoria_service: AuditoriaService,
     ) -> None:
         self._repositorio = repositorio
         self._genero_service = genero_service
         self._editorial_service = editorial_service
         self._repositorio_precios = repositorio_precios
         self._repositorio_stock = repositorio_stock
+        self._auditoria_service = auditoria_service
 
+    @auditar("CREAR_LIBRO")
     def crear(
         self,
         isbn: str,
@@ -447,14 +476,17 @@ class LibroService:
         )
         return self._repositorio.crear(libro)
 
+    @auditar("CONSULTAR_LIBRO")
     def obtener_por_id(self, id: int) -> Optional[Libro]:
         """Obtiene un libro por su id, o None si no existe."""
         return self._repositorio.leer_por_id(id)
 
+    @auditar("LISTAR_LIBROS")
     def listar(self) -> List[Libro]:
         """Devuelve todos los libros del catálogo."""
         return self._repositorio.leer_todos()
 
+    @auditar("ACTUALIZAR_LIBRO")
     def actualizar(
         self,
         id: int,
@@ -516,6 +548,7 @@ class LibroService:
             libro.ranking = ranking
         return self._repositorio.actualizar(libro)
 
+    @auditar("ELIMINAR_LIBRO")
     def eliminar(self, id: int) -> bool:
         """Elimina un libro por su id. Devuelve True si existía.
 
@@ -582,11 +615,14 @@ class PrecioService:
         repositorio: RepositorioPrecio,
         libro_service: LibroService,
         moneda_service: MonedaService,
+        auditoria_service: AuditoriaService,
     ) -> None:
         self._repositorio = repositorio
         self._libro_service = libro_service
         self._moneda_service = moneda_service
+        self._auditoria_service = auditoria_service
 
+    @auditar("CREAR_PRECIO")
     def crear(self, libro_id: int, moneda_id: int, valor: float) -> Precio:
         """Valida los datos y da de alta un nuevo precio para un libro.
 
@@ -605,14 +641,17 @@ class PrecioService:
         )
         return self._repositorio.crear(precio)
 
+    @auditar("CONSULTAR_PRECIO")
     def obtener_por_id(self, id: int) -> Optional[Precio]:
         """Obtiene un precio por su id, o None si no existe."""
         return self._repositorio.leer_por_id(id)
 
+    @auditar("LISTAR_PRECIOS")
     def listar(self) -> List[Precio]:
         """Devuelve todos los precios registrados."""
         return self._repositorio.leer_todos()
 
+    @auditar("ACTUALIZAR_PRECIO")
     def actualizar(
         self, id: int, moneda_id: Optional[int] = None, valor: Optional[float] = None
     ) -> Precio:
@@ -632,6 +671,7 @@ class PrecioService:
             precio.valor = valor
         return self._repositorio.actualizar(precio)
 
+    @auditar("ELIMINAR_PRECIO")
     def eliminar(self, id: int) -> bool:
         """Elimina un precio por su id. Devuelve True si existía."""
         return self._repositorio.eliminar(id)
@@ -660,11 +700,13 @@ class StockService:
     ESTADOS_VALIDOS = frozenset({"disponible", "agotado", "reservado", "descatalogado"})
 
     def __init__(
-        self, repositorio: RepositorioStock, libro_service: LibroService
+        self, repositorio: RepositorioStock, libro_service: LibroService, auditoria_service: AuditoriaService,
     ) -> None:
         self._repositorio = repositorio
         self._libro_service = libro_service
+        self._auditoria_service = auditoria_service
 
+    @auditar("CREAR_STOCK")
     def crear(
         self,
         libro_id: int,
@@ -692,10 +734,12 @@ class StockService:
         )
         return self._repositorio.crear(stock)
 
+    @auditar("CONSULTAR_STOCK")
     def obtener_por_libro(self, libro_id: int) -> Optional[Stock]:
         """Obtiene el stock de un libro, o None si no tiene stock registrado."""
         return self._repositorio.leer_por_libro(libro_id)
 
+    @auditar("ACTUALIZAR_STOCK")
     def actualizar(
         self,
         libro_id: int,
@@ -725,6 +769,7 @@ class StockService:
             stock.fecha_ingreso = fecha_ingreso
         return self._repositorio.actualizar(stock)
 
+    @auditar("ELIMINAR_STOCK")
     def eliminar(self, libro_id: int) -> bool:
         """Elimina el stock de un libro. Devuelve True si existía."""
         return self._repositorio.eliminar(libro_id)
@@ -761,10 +806,13 @@ class CotizacionDolarService:
         self,
         repositorio: RepositorioCotizacionDolar,
         tipo_cotizacion_service: TipoCotizacionService,
+        auditoria_service: AuditoriaService,
     ) -> None:
         self._repositorio = repositorio
         self._tipo_cotizacion_service = tipo_cotizacion_service
+        self._auditoria_service = auditoria_service
 
+    @auditar("CREAR_COTIZACION")
     def crear(
         self, tipo_cotizacion_id: int, fecha: datetime.date, valor: float
     ) -> CotizacionDolar:
@@ -782,16 +830,19 @@ class CotizacionDolarService:
         )
         return self._repositorio.crear(cotizacion)
 
+    @auditar("CONSULTAR_COTIZACION")
     def obtener_por_tipo_y_fecha(
         self, tipo_cotizacion_id: int, fecha: datetime.date
     ) -> Optional[CotizacionDolar]:
         """Obtiene la cotización de un tipo en una fecha dada, o None."""
         return self._repositorio.leer_por_tipo_y_fecha(tipo_cotizacion_id, fecha)
 
+    @auditar("LISTAR_COTIZACIONES")
     def listar_historico(self, tipo_cotizacion_id: int) -> List[CotizacionDolar]:
         """Devuelve el histórico de cotizaciones de un tipo dado."""
         return self._repositorio.leer_historico_por_tipo(tipo_cotizacion_id)
 
+    @auditar("ACTUALIZAR_COTIZACION")
     def actualizar(
         self, tipo_cotizacion_id: int, fecha: datetime.date, valor: float
     ) -> CotizacionDolar:
@@ -808,6 +859,7 @@ class CotizacionDolarService:
         cotizacion.valor = valor
         return self._repositorio.actualizar(cotizacion)
 
+    @auditar("ELIMINAR_COTIZACION")
     def eliminar(self, tipo_cotizacion_id: int, fecha: datetime.date) -> bool:
         """Elimina la cotización de un tipo en una fecha.
 
@@ -816,6 +868,7 @@ class CotizacionDolarService:
         return self._repositorio.eliminar(tipo_cotizacion_id, fecha)
 
 
+    @auditar("OBTENER_COTIZACIONES_API")
     def obtener_cotizaciones(self) -> List[CotizacionDolar]:
         """Consulta la API y registra las cotizaciones en la base de datos.
 

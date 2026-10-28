@@ -16,24 +16,62 @@ from book_manager.services.services import (
     TipoCotizacionService,
 )
 from book_manager.ui.console import iniciar_menu
-
+from book_manager.auditoria import AuditoriaService
 
 def crear_servicios(repositorios: Dict[str, object]) -> Dict[str, object]:
     """Instancia los servicios de negocio a partir de los repositorios."""
-    generos = GeneroService(repositorios["generos"], repositorios["libros"])
+    auditorias = AuditoriaService(repositorios["auditorias"])
+
+    generos = GeneroService(
+        repositorios["generos"],
+        repositorios["libros"],
+        auditorias,
+    )
+
     editoriales = EditorialService(
-        repositorios["editoriales"], repositorios["libros"]
+        repositorios["editoriales"],
+        repositorios["libros"],
+        auditorias,
     )
-    monedas = MonedaService(repositorios["monedas"], repositorios["precios"])
+
+    monedas = MonedaService(
+        repositorios["monedas"],
+        repositorios["precios"],
+        auditorias,
+    )
+
     tipos_cotizacion = TipoCotizacionService(
-        repositorios["tipos_cotizacion"], repositorios["cotizaciones"]
+        repositorios["tipos_cotizacion"],
+        repositorios["cotizaciones"],
+        auditorias,
     )
+
     libros = LibroService(
         repositorios["libros"],
         generos,
         editoriales,
         repositorios["precios"],
         repositorios["stock"],
+        auditorias,
+    )
+
+    precios = PrecioService(
+        repositorios["precios"],
+        libros,
+        monedas,
+        auditorias,
+    )
+
+    stock = StockService(
+        repositorios["stock"],
+        libros,
+        auditorias,
+    )
+
+    cotizaciones = CotizacionDolarService(
+        repositorios["cotizaciones"],
+        tipos_cotizacion,
+        auditorias,
     )
 
     return {
@@ -42,11 +80,10 @@ def crear_servicios(repositorios: Dict[str, object]) -> Dict[str, object]:
         "monedas": monedas,
         "tipos_cotizacion": tipos_cotizacion,
         "libros": libros,
-        "precios": PrecioService(repositorios["precios"], libros, monedas),
-        "stock": StockService(repositorios["stock"], libros),
-        "cotizaciones": CotizacionDolarService(
-            repositorios["cotizaciones"], tipos_cotizacion
-        ),
+        "precios": precios,
+        "stock": stock,
+        "cotizaciones": cotizaciones,
+        "auditorias": auditorias,
     }
 
 

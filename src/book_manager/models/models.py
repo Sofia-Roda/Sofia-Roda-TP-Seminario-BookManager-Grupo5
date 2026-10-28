@@ -1,6 +1,7 @@
 from sqlalchemy import (
     Column,
     Date,
+    DateTime,
     Float,
     ForeignKey,
     Integer,
@@ -138,3 +139,14 @@ class CotizacionDolarModel(Base):
     __table_args__ = (
         UniqueConstraint("tipo_cotizacion_id", "fecha", name="uq_tipo_cotizacion_fecha"),
     )
+
+
+class AuditoriaModel(Base):
+    """Modelo de base de datos para el registro de auditorías."""
+
+    __tablename__ = "auditorias"
+
+    id = Column(Integer, primary_key=True)
+    accion = Column(String(100), nullable=False)
+    fecha = Column(DateTime, nullable=False)
+    detalles = Column(Text, nullable=False)

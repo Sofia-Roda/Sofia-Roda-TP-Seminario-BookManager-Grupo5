@@ -515,3 +515,53 @@ class CotizacionDolar(EntidadBase):
             f"compra={self._compra}, "
             f"venta={self._valor})"
         )
+
+
+class Auditoria(EntidadBase):
+    """Representa un registro de auditoría del sistema."""
+
+    def __init__(
+        self,
+        id: int,
+        accion: str,
+        fecha: datetime.datetime,
+        detalles: str,
+    ) -> None:
+        super().__init__(id)
+        self.accion = accion
+        self.fecha = fecha
+        self.detalles = detalles
+
+    @property
+    def accion(self) -> str:
+        return self._accion
+
+    @accion.setter
+    def accion(self, valor: str) -> None:
+        self._accion = _validar_texto(valor, "acción")
+
+    @property
+    def fecha(self) -> datetime.datetime:
+        return self._fecha
+
+    @fecha.setter
+    def fecha(self, valor: datetime.datetime) -> None:
+        if not isinstance(valor, datetime.datetime):
+            raise TypeError("El campo fecha debe ser una fecha y hora.")
+        self._fecha = valor
+
+    @property
+    def detalles(self) -> str:
+        return self._detalles
+
+    @detalles.setter
+    def detalles(self, valor: str) -> None:
+        self._detalles = _validar_texto(valor, "detalles")
+
+    def __repr__(self) -> str:
+        return (
+            f"Auditoria("
+            f"id={self._id}, "
+            f"accion={self._accion}, "
+            f"fecha={self._fecha})"
+        )
