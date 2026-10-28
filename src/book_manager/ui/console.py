@@ -9,6 +9,7 @@ from book_manager.scraper.reporte_excel import generar_reporte_excel
 
 # Lectura y validación de datos
 
+
 def leer_entero(mensaje: str) -> int:
     """Solicita al usuario un número entero y valida la entrada."""
     while True:
@@ -47,6 +48,7 @@ def leer_fecha(mensaje: str) -> datetime.date:
 
 
 #--------------------------------- CRUD de géneros---------------------------------
+
 
 def mostrar_generos(genero_service) -> None:
     """Muestra todos los géneros registrados."""
@@ -771,6 +773,7 @@ def mostrar_precios_bimonetarios(
                 round(valor_usd, 2),
             )
 
+
 def exportar_precios_csv(precio_service) -> None:
     """Exporta los precios registrados a un archivo CSV."""
     print("\n--- EXPORTAR PRECIOS A CSV ---")
@@ -820,6 +823,7 @@ def exportar_precios_csv(precio_service) -> None:
         "Archivo generado correctamente:",
         nombre_archivo,
     )
+
 
 def gestionar_precios(precio_service,cotizacion_service,tipo_service,) -> None:
     """Muestra y administra el menú de opciones de precios."""
@@ -1071,6 +1075,7 @@ def borrar_cotizacion(cotizacion_service) -> None:
     else:
         print("No se encontró la cotización.")
 
+
 def obtener_cotizaciones_api(cotizacion_service) -> None:
     """Obtiene y muestra las cotizaciones consultadas desde la API."""
     print("\n--- OBTENER COTIZACIONES POR API ---")
@@ -1095,6 +1100,7 @@ def obtener_cotizaciones_api(cotizacion_service) -> None:
 
     except RuntimeError as exc:
         print("Error:", exc)
+
 
 def gestionar_cotizaciones(cotizacion_service, tipo_service) -> None:
     """Muestra y administra el menú de opciones de cotizaciones."""
@@ -1186,6 +1192,7 @@ def ejecutar_scraping(
         print("Error:", exc)
         return []
 
+
 def generar_reporte(
     comparaciones: list[dict],
     auditoria_service,
@@ -1219,6 +1226,7 @@ def generar_reporte(
 
         print("Error:", exc)
 
+
 def mostrar_historial_auditoria(auditoria_service) -> None:
     """Muestra el historial de auditorías registradas en el sistema."""
     print("\n--- HISTORIAL DE AUDITORÍA ---")
@@ -1241,7 +1249,9 @@ def mostrar_historial_auditoria(auditoria_service) -> None:
             auditoria.detalles,
         )
 
+
 # Menú principal
+
 
 def iniciar_menu(servicios: dict) -> None:
     """Muestra y administra el menú principal del sistema."""
@@ -1287,7 +1297,11 @@ def iniciar_menu(servicios: dict) -> None:
                 gestionar_libros(servicios["libros"])
 
             case "6":
-                gestionar_precios(servicios["precios"],servicios["cotizaciones"],servicios["tipos_cotizacion"],)
+                gestionar_precios(
+                    servicios["precios"],
+                    servicios["cotizaciones"],
+                    servicios["tipos_cotizacion"],
+                )
 
             case "7":
                 gestionar_stock(servicios["stock"], servicios["libros"])

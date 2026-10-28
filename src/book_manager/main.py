@@ -1,5 +1,6 @@
 from typing import Dict
 
+from book_manager.auditoria import AuditoriaService
 from book_manager.database.connection import ConexionDB
 from book_manager.preload_data.preload_data import (
     cargar_datos_iniciales,
@@ -16,7 +17,7 @@ from book_manager.services.services import (
     TipoCotizacionService,
 )
 from book_manager.ui.console import iniciar_menu
-from book_manager.auditoria import AuditoriaService
+
 
 def crear_servicios(repositorios: Dict[str, object]) -> Dict[str, object]:
     """Instancia los servicios de negocio a partir de los repositorios."""

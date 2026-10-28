@@ -114,7 +114,8 @@ class CuspideSpider(scrapy.Spider):
         ).get()
 
         imagen_url = None
-
+        producto = None
+        
         if datos_json:
             datos = json.loads(datos_json)
 
